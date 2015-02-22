@@ -7,9 +7,8 @@ A Swift implementation of [Clojure](http://clojure.org)'s [persistent data struc
 All core operations on vectors have been implemented:
 
 ```swift
-var v: PersistentVector = ["a", "b", "c"]
-var v2 = v.conj("d")
-v2 = v2.assoc(2, "C")
+let v: PersistentVector = ["a", "b", "c"]
+let v2 = v.conj("d").assoc(2, "C")
 assert(v == ["a", "b", "c"])
 assert(v2 == ["a", "b", "C", "d"])
 assert(v.pop() == v2[0..<2])
