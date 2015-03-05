@@ -20,7 +20,7 @@
 //  MARK: - ChunkedGenerator
 //
 
-// n.b. ChunkedGenerator copies can be advanced independently
+// n.b. ChunkedGenerator copies can be advanced independently when backed by a persistent data structure
 public struct ChunkedGenerator<T>: GeneratorType {
     typealias Element = T
     typealias ChunkFunction = Int -> (chunk: [T], offset: Int)
