@@ -1,6 +1,6 @@
 # Ruminant
 
-A Swift implementation of [Clojure](http://clojure.org)'s [persistent data structures](http://en.wikipedia.org/wiki/Persistent_data_structure). Currently persistent vectors are implemented. Persistent hash maps are next on my list.
+A Swift implementation of [Clojure](http://clojure.org)'s [persistent data structures](http://en.wikipedia.org/wiki/Persistent_data_structure). Currently persistent and transient vectors are implemented. Persistent hash maps are next on my list.
 
 ## Persistent Vectors
 
@@ -14,8 +14,6 @@ assert(v2 == ["a", "b", "C", "d"])
 assert(v.pop() == v2[0..<2])
 assert(map(v, {$0.uppercaseString}) == ["A", "B", "C"])
 ```
-
-Transient vectors have not yet been implemented, but I'm working on it.
 
 ## License
 
