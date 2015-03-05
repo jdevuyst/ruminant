@@ -6,14 +6,19 @@
 //  Copyright (c) 2015 Jonas De Vuyst. All rights reserved.
 //
 
-func arrayPop<T>(var arr: [T]) -> [T] {
-    arr.removeLast()
-    return arr
+func arrayPop<T>(let arr: [T]) -> [T] {
+    var arr2 = [T]()
+    arr2.reserveCapacity(arr.count - 1)
+    arr2.extend(arr[0..<arr.count - 1])
+    return arr2
 }
 
-func arrayConj<T>(var arr: [T], val: T) -> [T] {
-    arr.append(val)
-    return arr
+func arrayConj<T>(let arr: [T], val: T) -> [T] {
+    var arr2 = [T]()
+    arr2.reserveCapacity(arr.count + 1)
+    arr2.extend(arr)
+    arr2.append(val)
+    return arr2
 }
 
 func arrayAssoc<T>(var arr: [T], idx: Int, val: T) -> [T] {

@@ -57,77 +57,68 @@ public struct ChunkedGenerator<T>: GeneratorType {
 //  MARK: - Node Types
 //
 
-private class Node<T> {
-    let transient: Bool
+class Node<T> {
+    var editID: Int
     
-    init(transient: Bool) {
-        self.transient = transient
+    init(transientID: Int) {
+        self.editID = transientID
     }
     
-    func newPath(#transient: Bool, shift: Int) -> Node<T> {
-        return shift == 0
-            ? self
-            : TreeNode(transient: transient, children: [self])
-                .newPath(transient: transient, shift: shift - 5)
-    }
-    
-    func pushTail(#count: Int, shift: Int, tailNode: Node<T>) -> Node<T> { assert(false) }
-    
-    func popTail(#count: Int, shift: Int) -> Node<T>? { assert(false) }
+    func transientVersion(#transientID: Int) -> Node { assert(false) }
     
     func getChunk(#index: Int, shift: Int) -> [T] { assert(false) }
     
-    func assoc(#index: Int, shift: Int, element: T) -> Node<T> { assert(false) }
+    func transientChunk(#transientID: Int, index: Int, shift: Int, inout chunk: [T]) { assert(false) }
     
-    func onlyChildNode() -> Node<T>? { assert(false) }
+    func newPath(#transientID: Int, shift: Int) -> Node {
+        return shift == 0
+            ? self
+            : TreeNode(transientID: transientID, children: [self])
+                .newPath(transientID: transientID, shift: shift - 5)
+    }
+    
+    func pushTail(#count: Int, shift: Int, tailNode: Node) -> Node { assert(false) }
+    
+    func transientPushTail(#transientID: Int, count: Int, shift: Int, tailNode: Node) -> Node { assert(false) }
+    
+    func popTail(#count: Int, shift: Int) -> Node? { assert(false) }
+    
+    func transientPopTail(#transientID: Int, count: Int, shift: Int) -> Node? { assert(false) }
+    
+    func assoc(#index: Int, shift: Int, element: T) -> Node { assert(false) }
+    
+    func transientAssoc(#transientID: Int, index: Int, shift: Int, element: T) -> Node { assert(false) }
+    
+    func onlyChildNode() -> Node? { assert(false) }
 }
 
 private class TreeNode<T> : Node<T> {
-    private let children: [Node<T>]
+    private var children: [Node<T>]
     
-    init(transient: Bool, children: [Node<T>]) {
+    init(transientID: Int, children: [Node<T>]) {
         assert(children.count <= 32)
+        assert(children.capacity <= 32)
         self.children = children
-        super.init(transient: transient)
+        super.init(transientID: transientID)
     }
     
-    convenience init() {
-        self.init(transient: false, children: [])
+    override init(transientID: Int) {
+        self.children = []
+        if transientID != 0 {
+            self.children.reserveCapacity(32)
+        }
+        super.init(transientID: transientID)
     }
     
-    override func pushTail(#count: Int, shift: Int, tailNode: Node<T>) -> Node<T> {
-        assert(shift > 0)
-        let subidx = ((count - 1) >> shift) & 0x01f
-        assert(subidx < 32)
-        
-        let newChildren: [Node<T>]
-        
-        if(shift == 5) {
-            assert(subidx == children.count)
-            newChildren = arrayConj(children, tailNode)
-        } else if subidx == children.count {
-            newChildren = arrayConj(children, tailNode.newPath(transient: false, shift: shift - 5))
-        } else {
-            assert(subidx < children.count)
-            newChildren = arrayAssoc(children, subidx, children[subidx].pushTail(count: count, shift: shift - 5, tailNode: tailNode))
+    override func transientVersion(#transientID: Int) -> TreeNode {
+        if self.editID == transientID {
+            return self
         }
         
-        return TreeNode(transient: transient, children: newChildren)
-    }
-    
-    override func popTail(#count: Int, shift: Int) -> Node<T>? {
-        let subidx = ((count - 2) >> shift) & 0x01f
-        assert(subidx < 32)
-        
-        if shift > 5 {
-            if let newChild = children[subidx].popTail(count: count, shift: shift - 5) {
-                assert(subidx < children.count)
-                return TreeNode(transient: transient, children: arrayAssoc(children, subidx, newChild))
-            }
-        }
-        
-        assert(subidx == children.count - 1)
-        return subidx == 0 ? nil : TreeNode(transient: transient, children: arrayPop(children))
+        var newChildren = [Node<T>]()
+        newChildren.reserveCapacity(32)
+        newChildren.extend(children)
+        return TreeNode<T>(transientID: transientID, children: newChildren)
     }
     
     override func getChunk(#index: Int, shift: Int) -> [T] {
@@ -135,14 +126,93 @@ private class TreeNode<T> : Node<T> {
         return children[(index >> shift) & 0x01f].getChunk(index: index, shift: shift - 5)
     }
     
-    override func assoc(#index: Int, shift: Int, element: T) -> Node<T> {
-        let subidx = (index >> shift) & 0x01f
-        assert(subidx < 32)
-        
+    override func transientChunk(#transientID: Int, index: Int, shift: Int, inout chunk: [T]) {
         assert(shift > 0)
-        assert(subidx < children.count)
+        children[(index >> shift) & 0x01f].transientChunk(transientID: transientID, index: index, shift: shift - 5, chunk: &chunk)
+    }
+    
+    override func pushTail(#count: Int, shift: Int, tailNode: Node<T>) -> Node<T> {
+        assert(shift > 0)
+        let subidx = ((count - 1) >> shift) & 0x01f
+        
+        let newChildren: [Node<T>]
+        
+        if(shift == 5) {
+            assert(subidx == children.count)
+            newChildren = arrayConj(children, tailNode)
+        } else if subidx == children.count {
+            newChildren = arrayConj(children, tailNode.newPath(transientID: 0, shift: shift - 5))
+        } else {
+            newChildren = arrayAssoc(children, subidx, children[subidx].pushTail(count: count, shift: shift - 5, tailNode: tailNode))
+        }
+        
+        return TreeNode(transientID: self.editID, children: newChildren)
+    }
+    
+    override func transientPushTail(#transientID: Int, count: Int, shift: Int, tailNode: Node<T>) -> Node<T> {
+        assert(shift > 0)
+        
+        let transientSelf = self.transientVersion(transientID: transientID)
+        let subidx = ((count - 1) >> shift) & 0x01f
+        
+        if(shift == 5) {
+            assert(subidx == children.count)
+            children.append(tailNode)
+        } else if subidx == children.count {
+            children.append(tailNode.newPath(transientID: transientID, shift: shift - 5))
+        } else {
+            children[subidx] = children[subidx].pushTail(count: count, shift: shift - 5, tailNode: tailNode)
+        }
+        
+        return transientSelf
+    }
+    
+    override func popTail(#count: Int, shift: Int) -> Node<T>? {
+        let subidx = ((count - 2) >> shift) & 0x01f
+        
+        if shift > 5 {
+            if let newChild = children[subidx].popTail(count: count, shift: shift - 5) {
+                return TreeNode(transientID: self.editID, children: arrayAssoc(children, subidx, newChild))
+            }
+        }
+        
+        assert(subidx == children.count - 1)
+        return subidx == 0 ? nil : TreeNode(transientID: self.editID, children: arrayPop(children))
+    }
+    
+    override func transientPopTail(#transientID: Int, count: Int, shift: Int) -> Node<T>? {
+        let subidx = ((count - 2) >> shift) & 0x01f
+        
+        if shift > 5 {
+            if let newChild = children[subidx].transientPopTail(transientID: transientID, count: count, shift: shift - 5) {
+                children[subidx] = newChild
+                return self
+            }
+        }
+        
+        assert(subidx == children.count - 1)
+        
+        if subidx == 0 {
+            return nil
+        }
+        
+        children.removeLast()
+        return self
+    }
+    
+    override func assoc(#index: Int, shift: Int, element: T) -> Node<T> {
+        assert(shift > 0)
+        let subidx = (index >> shift) & 0x01f
         let newChildren = arrayAssoc(children, subidx, children[subidx].assoc(index: index, shift: shift - 5, element: element))
-        return TreeNode(transient: transient, children: newChildren)
+        return TreeNode(transientID: self.editID, children: newChildren)
+    }
+    
+    override func transientAssoc(#transientID: Int, index: Int, shift: Int, element: T) -> Node<T> {
+        assert(shift > 0)
+        let subidx = (index >> shift) & 0x01f
+        let transientSelf = transientVersion(transientID: transientID)
+        transientSelf.children[subidx] = children[subidx].transientAssoc(transientID: transientID, index: index, shift: shift - 5, element: element)
+        return transientSelf
     }
     
     override func onlyChildNode() -> Node<T>? {
@@ -151,13 +221,18 @@ private class TreeNode<T> : Node<T> {
 }
 
 private class LeafNode<T> : Node<T> {
-    private let children: [T]
+    private var children: [T]
     
-    init(transient: Bool, children: [T]) {
-        assert(!children.isEmpty)
-        assert(children.count <= 32)
+    init(transientID: Int, children: [T]) {
+        assert(children.count == 32)
+        assert(children.capacity == 32)
         self.children = children
-        super.init(transient: transient)
+        super.init(transientID: transientID)
+    }
+    
+    override func transientVersion(#transientID: Int) -> LeafNode {
+        assert(transientID != 0)
+        return self.editID == transientID ? self : LeafNode<T>(transientID: transientID, children: children)
     }
     
     override func getChunk(#index: Int, shift: Int) -> [T] {
@@ -165,13 +240,24 @@ private class LeafNode<T> : Node<T> {
         return children
     }
     
-    override func assoc(#index: Int, shift: Int, element: T) -> Node<T> {
-        let subidx = (index >> shift) & 0x01f
-        assert(subidx < 32)
-        
+    override func transientChunk(#transientID: Int, index: Int, shift: Int, inout chunk: [T]) {
         assert(shift == 0)
-        assert(subidx < children.count)
-        return LeafNode(transient: transient, children: arrayAssoc(children, subidx, element))
+        let transientSelf = transientVersion(transientID: transientID)
+        chunk = transientSelf.children
+    }
+    
+    override func assoc(#index: Int, shift: Int, element: T) -> Node<T> {
+        assert(shift == 0)
+        let subidx = index & 0x01f
+        return LeafNode(transientID: self.editID, children: arrayAssoc(children, subidx, element))
+    }
+    
+    override func transientAssoc(#transientID: Int, index: Int, shift: Int, element: T) -> Node<T> {
+        assert(shift == 0)
+        let subidx = index & 0x01f
+        let transientSelf = transientVersion(transientID: transientID)
+        transientSelf.children[subidx] = element
+        return transientSelf
     }
 }
 
@@ -196,9 +282,8 @@ public func ==<T: PersistentVectorType, U: PersistentVectorType where T.Generato
         return false
     }
     
-    var lg = lhs.generate()
     var rg = rhs.generate()
-    while let x = lg.next() {
+    for x in lhs {
         if x != rg.next()! {
             return false
         }
@@ -211,12 +296,11 @@ public func ==<T: PersistentVectorType, U: PersistentVectorType where T.Generato
 //  MARK: - PersistentVector
 //
 
-public struct PersistentVector<T: Hashable> : PersistentVectorType, ArrayLiteralConvertible {
+public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLiteralConvertible {
     public let count: Int
-    private let shift: Int
-    private let root: Node<T>
-    private let tail: [T]
-    private let hashBox = LazyBox<Int>()
+    let shift: Int
+    let root: Node<T>
+    let tail: [T]
     
     private init(count: Int, shift: Int, root: Node<T>, tail: [T]) {
         assert(count >= 0)
@@ -229,7 +313,7 @@ public struct PersistentVector<T: Hashable> : PersistentVectorType, ArrayLiteral
     }
     
     public init() {
-        self.init(count: 0, shift: 5, root: TreeNode(), tail: [])
+        self.init(count: 0, shift: 5, root: TreeNode(transientID: 0), tail: [])
     }
     
     public init(arrayLiteral xs: T...) {
@@ -264,12 +348,12 @@ public struct PersistentVector<T: Hashable> : PersistentVectorType, ArrayLiteral
             newRoot = root
             newTail = arrayConj(tail, element)
         } else {
-            let tailNode = LeafNode<T>(transient: false, children: tail)
+            let tailNode = LeafNode<T>(transientID: 0, children: tail)
             let rootOverflow = (count >> 5) > (1 << shift)
             
             if rootOverflow {
                 newShift += 5
-                newRoot = TreeNode(transient: false, children: [root, tailNode.newPath(transient: false, shift: shift)])
+                newRoot = TreeNode(transientID: 0, children: [root, tailNode.newPath(transientID: 0, shift: shift)])
             } else {
                 newRoot = root.pushTail(count: count, shift: shift, tailNode: tailNode)
             }
@@ -302,7 +386,7 @@ public struct PersistentVector<T: Hashable> : PersistentVectorType, ArrayLiteral
                 }
             } else {
                 assert(shift == 5)
-                newRoot = TreeNode(transient: false, children: [])
+                newRoot = TreeNode(transientID: 0)
             }
             return PersistentVector(count: count - 1, shift: newShift, root: newRoot, tail: newTail)
         }
@@ -336,25 +420,32 @@ public struct PersistentVector<T: Hashable> : PersistentVectorType, ArrayLiteral
     }
     
     public var hashValue: Int { return count }
+    
+    public func transient() -> TransientVector<T> {
+        return TransientVector(vector: self, count: count)
+    }
 }
 
 //
 //  MARK: - Subvec
 //
 
-public struct Subvec<T: Hashable>: PersistentVectorType {
+public struct Subvec<T: Equatable>: PersistentVectorType {
     private let v: PersistentVector<T>
     private let start: Int
     private let end: Int
-    private let hashBox = LazyBox<Int>()
     
     init(vector: PersistentVector<T>, start: Int, end: Int) {
+        assert(end >= start)
+//        assert(end - start <= vector.count)
         self.v = vector
         self.start = start
         self.end = end
     }
     
     init(vector: Subvec, start: Int, end: Int) {
+        assert(end >= start)
+//        assert(end - start <= vector.count)
         self.v = vector.v
         self.start = vector.start + start
         self.end = vector.start + end
@@ -367,6 +458,7 @@ public struct Subvec<T: Hashable>: PersistentVectorType {
     }
     
     public func pop() -> Subvec {
+        precondition(count > 0, "Cannot pop() an empty vector")
         return Subvec(vector: v, start: start, end: end - 1)
     }
     
@@ -381,6 +473,148 @@ public struct Subvec<T: Hashable>: PersistentVectorType {
     }
     
     public var hashValue: Int { return count }
+}
+
+//
+//  MARK: - TransientVector
+//
+
+private var transientVectorCounter = 0
+
+public struct TransientVector<T: Equatable> {
+    private var count: Int
+    private var shift: Int
+    private var root: Node<T>
+    private var tail: [T]
+    
+    private init(count: Int, shift: Int, root: Node<T>, tail: [T]) {
+        assert(count >= 0)
+        assert(shift > 0)
+        assert(shift % 5 == 0)
+        assert(root.editID != 0)
+        
+        self.count = count
+        self.shift = shift
+        self.root = root
+        
+        self.tail = []
+        self.tail.reserveCapacity(32)
+        self.tail.extend(tail)
+    }
+    
+    private init() {
+        self.init(count: 0, shift: 5, root: TreeNode(transientID: ++transientVectorCounter, children: []), tail: [])
+    }
+    
+    init(vector: PersistentVector<T>, count: Int) {
+        // XXX count arg exists because the 1.2 compiler segfaults on vector.count
+        self.init(count: count, shift: vector.shift, root: vector.root.transientVersion(transientID: ++transientVectorCounter), tail: vector.tail)
+    }
+    
+    private func tailOffset() -> Int {
+        let r = count < 32 ? 0 : (((count - 1) >> 5) << 5)
+        assert(r == count - tail.count)
+        return r
+    }
+    
+    private func verifyBounds(index: Int) {
+        precondition(index >= 0 && index < count, "Index \(index) is out of bounds for vector of size \(count)")
+    }
+    
+    private func verifyTransient() {
+        precondition(root.editID != 0, "Cannot modify TransientVector after persistent()")
+        assert(tail.capacity == 32)
+    }
+    
+    private func transientChunk(index: Int, inout chunk: [T]) {
+        chunk = index < tailOffset() ? root.getChunk(index: index, shift: self.shift) : tail
+    }
+    
+    public mutating func conj(element: T) -> TransientVector {
+        verifyTransient()
+        
+        if count - tailOffset() < 32 {
+            tail.append(element)
+        } else {
+            let tailNode = LeafNode<T>(transientID: root.editID, children: tail)
+            
+            tail = []
+            tail.reserveCapacity(32)
+            tail.append(element)
+            
+            if count >> 5 > 1 << shift {
+                root = TreeNode<T>(transientID: root.editID, children: [root, tailNode.newPath(transientID: root.editID, shift: shift)])
+                shift += 5
+            } else {
+                root = root.transientPushTail(transientID: root.editID, count: count, shift: shift, tailNode: tailNode)
+            }
+        }
+        
+        count++
+        return self
+    }
+    
+    public mutating func persistent() -> PersistentVector<T> {
+        verifyTransient()
+        
+        root.editID = 0
+        
+        var newTail = [T]()
+        newTail.reserveCapacity(tail.count)
+        newTail.extend(tail)
+        
+        return PersistentVector(count: count, shift: shift, root: root, tail: newTail)
+    }
+    
+    public mutating func pop() -> TransientVector {
+        verifyTransient()
+        
+        switch count {
+        case 0:
+            preconditionFailure("Cannot pop() an empty vector")
+        case 1:
+            return TransientVector()
+        case _ where count - tailOffset() > 1:
+            tail.removeLast()
+        default:
+            assert(count - 2 < tailOffset())
+            
+            transientChunk(count - 2, chunk: &tail)
+            
+            if let r = root.transientPopTail(transientID: root.editID, count: count, shift: shift) {
+                if let r2 = r.onlyChildNode() where shift > 5 {
+                    shift -= 5
+                    root = r2
+                } else {
+                    root = r
+                }
+            } else {
+                assert(shift == 5)
+                root = TreeNode(transientID: root.editID)
+            }
+        }
+        
+        count--
+        return self
+    }
+    
+    public mutating func assoc(index: Int, _ element: T) -> TransientVector {
+        verifyTransient()
+        
+        if index == count {
+            return self.conj(element)
+        }
+        
+        verifyBounds(index)
+        
+        if tailOffset() <= index {
+            tail[index &  0x01f] = element
+        } else {
+            root = root.transientAssoc(transientID: root.editID, index: index, shift: shift, element: element)
+        }
+        
+        return self
+    }
 }
 
 //
