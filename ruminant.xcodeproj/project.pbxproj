@@ -13,6 +13,8 @@
 		F8D78DA91FF4D79600A938DA /* tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA81FF4D79600A938DA /* tree.swift */; };
 		F8FEA3571FF4EDEE001E9CBF /* utilTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FEA3461FF4EC11001E9CBF /* utilTest.swift */; };
 		F8FEA3581FF4EE06001E9CBF /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA11FF4D2BB00A938DA /* util.swift */; };
+		F8FEA35A1FF4FB8D001E9CBF /* chunkediteratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FEA3591FF4FB8D001E9CBF /* chunkediteratorTest.swift */; };
+		F8FEA35B1FF4FE55001E9CBF /* chunkediterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -37,6 +39,7 @@
 		F8FEA3461FF4EC11001E9CBF /* utilTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utilTest.swift; sourceTree = "<group>"; };
 		F8FEA34F1FF4EDDF001E9CBF /* ruminantTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F8FEA3531FF4EDDF001E9CBF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		F8FEA3591FF4FB8D001E9CBF /* chunkediteratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediteratorTest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +102,7 @@
 			isa = PBXGroup;
 			children = (
 				F8FEA3461FF4EC11001E9CBF /* utilTest.swift */,
+				F8FEA3591FF4FB8D001E9CBF /* chunkediteratorTest.swift */,
 				F8FEA3531FF4EDDF001E9CBF /* Info.plist */,
 			);
 			path = Tests;
@@ -205,6 +209,8 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8FEA35B1FF4FE55001E9CBF /* chunkediterator.swift in Sources */,
+				F8FEA35A1FF4FB8D001E9CBF /* chunkediteratorTest.swift in Sources */,
 				F8FEA3581FF4EE06001E9CBF /* util.swift in Sources */,
 				F8FEA3571FF4EDEE001E9CBF /* utilTest.swift in Sources */,
 			);

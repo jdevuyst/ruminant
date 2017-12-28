@@ -25,9 +25,9 @@ public struct ChunkedIterator<T>: IteratorProtocol {
     }
     
     public mutating func next() -> T? {
-        if i < end {
+        if i <= end {
             if j == chunk.count {
-                (chunk: chunk, offset: j) = f(0)
+                (chunk: chunk, offset: j) = f(i)
             }
             
             i += 1
@@ -36,7 +36,6 @@ public struct ChunkedIterator<T>: IteratorProtocol {
             }
             return chunk[j]
         }
-        
         return nil
     }
 }

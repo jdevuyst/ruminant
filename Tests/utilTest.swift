@@ -37,15 +37,25 @@ class UtilTest: XCTestCase {
     
     
     func testSeqDebugDescription() {
-        let fibonacci = [0,1,1,3,5,8,13]
+        let fibonacci : [DualInt] = [0,1,1,3,5,8,13]
         let description = seqDebugDescription(xs: fibonacci, ldelim: "[", rdelim: "]")
         XCTAssertEqual("[0, 1, 1, 11, 101, 1000, 1101]", description, "seqDebugDescription")
     }
 }
 
-// For testSeqDebugDescription only !!
-extension Int : CustomDebugStringConvertible {
+struct DualInt : CustomDebugStringConvertible, ExpressibleByIntegerLiteral {
+    typealias IntegerLiteralType = Int
+    
+    private let member : IntegerLiteralType
+    
     public var debugDescription : String {
-        return String(self, radix: 2)
+        return String(member, radix: 2)
+    }
+    
+    public init(integerLiteral value: IntegerLiteralType)
+    {
+        self.member = value
     }
 }
+
+
