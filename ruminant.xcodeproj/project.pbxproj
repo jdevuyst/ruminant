@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		F8CEBF301FF4D0740040F9FF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CEBF2F1FF4D0740040F9FF /* main.swift */; };
-		F8D78DA31FF4D2BB00A938DA /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA11FF4D2BB00A938DA /* util.swift */; };
-		F8D78DA41FF4D2BB00A938DA /* vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA21FF4D2BB00A938DA /* vector.swift */; };
+		F8D78DA51FF4D54900A938DA /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA11FF4D2BB00A938DA /* util.swift */; };
+		F8D78DA71FF4D65B00A938DA /* chunkediterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */; };
+		F8D78DA91FF4D79600A938DA /* tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA81FF4D79600A938DA /* tree.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +30,8 @@
 		F8CEBF2F1FF4D0740040F9FF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		F8D78DA11FF4D2BB00A938DA /* util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; };
 		F8D78DA21FF4D2BB00A938DA /* vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = vector.swift; sourceTree = "<group>"; };
+		F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediterator.swift; sourceTree = "<group>"; };
+		F8D78DA81FF4D79600A938DA /* tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tree.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +49,9 @@
 			isa = PBXGroup;
 			children = (
 				F8D78DA11FF4D2BB00A938DA /* util.swift */,
+				F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */,
 				F8D78DA21FF4D2BB00A938DA /* vector.swift */,
+				F8D78DA81FF4D79600A938DA /* tree.swift */,
 				F8CEBF2F1FF4D0740040F9FF /* main.swift */,
 				F8CEBF2D1FF4D0740040F9FF /* Products */,
 			);
@@ -118,9 +123,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F8D78DA71FF4D65B00A938DA /* chunkediterator.swift in Sources */,
+				F8D78DA91FF4D79600A938DA /* tree.swift in Sources */,
 				F8CEBF301FF4D0740040F9FF /* main.swift in Sources */,
-				F8D78DA31FF4D2BB00A938DA /* util.swift in Sources */,
-				F8D78DA41FF4D2BB00A938DA /* vector.swift in Sources */,
+				F8D78DA51FF4D54900A938DA /* util.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
