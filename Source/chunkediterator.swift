@@ -6,12 +6,16 @@
 
 // n.b. ChunkedIterator copies can be advanced independently when backed by a persistent data structure
 
-public struct ChunkedIterator<T>: IteratorProtocol {
+// https://www.uraimo.com/2015/11/12/experimenting-with-swift-2-sequencetype-generatortype/
+
+public class ChunkedIterator<T>: IteratorProtocol {
+    
     public typealias Element = T
     public typealias ChunkFunction = (Int) -> (chunk: [T], offset: Int)
     
     public let f: ChunkFunction
     private let end: Int
+    
     private var i: Int
     private var j = 0
     private var chunk: [T]
@@ -24,18 +28,19 @@ public struct ChunkedIterator<T>: IteratorProtocol {
         (chunk: self.chunk, offset: self.j) = end - start == 0 ? ([], 0) : f(start)
     }
     
-    public mutating func next() -> T? {
-        if i <= end {
-            if j == chunk.count {
-                (chunk: chunk, offset: j) = f(i)
-            }
-            
-            i += 1
-            defer {
-                j += 1
-            }
-            return chunk[j]
+    public func next() -> T? {
+        guard i < end else {
+            return nil
         }
-        return nil
+        
+        if j == chunk.count {
+            (chunk: chunk, offset: j) = f(i)
+        }
+        
+        i += 1
+        defer {
+            j += 1
+        }
+        return chunk[j]
     }
 }

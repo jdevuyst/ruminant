@@ -45,7 +45,7 @@ class Node<T> {
     func onlyChildNode() -> Node? { assert(false) }
 }
 
-private class TreeNode<T> : Node<T> {
+internal class TreeNode<T> : Node<T> {
     private var children: [Node<T>]
     
     init(transientID: Int, children: [Node<T>]) {
@@ -173,7 +173,7 @@ private class TreeNode<T> : Node<T> {
     }
 }
 
-private class LeafNode<T> : Node<T> {
+internal class LeafNode<T> : Node<T> {
     private var children: [T]
     
     init(transientID: Int, children: [T]) {

@@ -3,8 +3,7 @@
 //  ruminantTests
 //
 //  Created by Stefan Boether on 28.12.17.
-//  Copyright © 2017 Gloria42. All rights reserved.
-//
+
 
 import XCTest
 
@@ -24,13 +23,12 @@ class ChunkedIteratorTest: XCTestCase {
                 [832040, 1346269]
             ]
         
-        
         let flatten = fibonacciChunked.flatMap { $0 }
         
         let getChunk =
             { (chunk: fibonacciChunked[$0 / 5], offset: $0 % 5) }
         
-        let sequence = AnySequence { ChunkedIterator(f: getChunk, start: 0, end: 31) }.map { $0}
+        let sequence = AnySequence { ChunkedIterator(f: getChunk, start: 0, end: 32) }.map { $0}
         XCTAssertEqual(flatten, sequence, "ChunkedIterator")
     }
 }

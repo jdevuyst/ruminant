@@ -17,28 +17,24 @@
 //
 
 
-//
-//  MARK: - PersistentVectorType
-//
-
-public protocol PersistentVectorType: Hashable, SequenceType {
+public protocol PersistentVectorType: Hashable, Sequence {
     var count: Int { get }
     
-    func conj(element: Generator.Element) -> Self
-
+    func conj(_ element: Element) -> Self
+    
     func pop() -> Self
-
-    subscript(index: Int) -> Generator.Element { get }
-
-    func assoc(index: Int, _ element: Generator.Element) -> Self
+    
+    subscript(index: Int) -> Element { get }
+    
+    func assoc(index: Int, _ element: Element) -> Self
 }
 
-public func ==<T: PersistentVectorType, U: PersistentVectorType where T.Generator.Element == U.Generator.Element, T.Generator.Element: Equatable>(lhs: T, rhs: U) -> Bool {
+public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U) -> Bool where T.Iterator.Element == U.Iterator.Element, T.Iterator.Element: Equatable {
     if lhs.count != rhs.count {
         return false
     }
     
-    var rg = rhs.generate()
+    var rg = rhs.makeIterator()
     for x in lhs {
         if x != rg.next()! {
             return false
@@ -52,13 +48,16 @@ public func ==<T: PersistentVectorType, U: PersistentVectorType where T.Generato
 //  MARK: - PersistentVector
 //
 
-public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLiteralConvertible {
+public struct PersistentVector<T: Equatable> : PersistentVectorType, ExpressibleByArrayLiteral {
+    
+    public typealias Iterator = ChunkedIterator<T>
+    
     public let count: Int
     let shift: Int
     let root: Node<T>
     let tail: [T]
     
-    private init(count: Int, shift: Int, root: Node<T>, tail: [T]) {
+    internal init(count: Int, shift: Int, root: Node<T>, tail: [T]) {
         assert(count >= 0)
         assert(shift > 0)
         assert(shift % 5 == 0)
@@ -69,7 +68,7 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLitera
     }
     
     public init() {
-        self.init(count: 0, shift: 5, root: TreeNode(transientID: 0), tail: [])
+        self.init(count: 0, shift: 5, root: TreeNode<T>(transientID: 0), tail: [])
     }
     
     public init(arrayLiteral xs: T...) {
@@ -90,28 +89,28 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLitera
         precondition(index >= 0 && index < count, "Index \(index) is out of bounds for vector of size \(count)")
     }
     
-    private func getChunk(index: Int) -> (chunk: [T], offset: Int) {
-        let chunk = index < tailOffset() ? root.getChunk(index: index, shift: self.shift) : tail
+    internal func getChunk(index: Int) -> (chunk: [T], offset: Int) {
+        let chunk = index < tailOffset() ? root.getChunk(index, shift: self.shift) : tail
         return (chunk: chunk, offset: index & 0x01f)
     }
     
-    public func conj(element: T) -> PersistentVector {
+    public func conj(_ element: T) -> PersistentVector {
         var newShift = shift
         let newRoot: Node<T>
         let newTail: [T]
         
         if count - tailOffset() < 32 {
             newRoot = root
-            newTail = arrayConj(tail, element)
+            newTail = arrayConj(tail, val: element)
         } else {
             let tailNode = LeafNode<T>(transientID: 0, children: tail)
             let rootOverflow = (count >> 5) > (1 << shift)
             
             if rootOverflow {
                 newShift += 5
-                newRoot = TreeNode(transientID: 0, children: [root, tailNode.newPath(transientID: 0, shift: shift)])
+                newRoot = TreeNode(transientID: 0, children: [root, tailNode.newPath(0, shift: shift)])
             } else {
-                newRoot = root.pushTail(count: count, shift: shift, tailNode: tailNode)
+                newRoot = root.pushTail(count, shift: shift, tailNode: tailNode)
             }
             
             newTail = [element]
@@ -130,11 +129,11 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLitera
             return PersistentVector(count: count - 1, shift: shift, root: root, tail: arrayPop(tail))
         default:
             assert(count - 2 < tailOffset())
-            let newTail = root.getChunk(index: count - 2, shift: shift)
+            let newTail = root.getChunk(count - 2, shift: shift)
             var newShift = shift
             let newRoot: Node<T>
-            if let r = root.popTail(count: count, shift: shift) {
-                if let r2 = r.onlyChildNode() where shift > 5 {
+            if let r = root.popTail(count, shift: shift) {
+                if let r2 = r.onlyChildNode(), shift > 5 {
                     newShift -= 5
                     newRoot = r2
                 } else {
@@ -149,8 +148,8 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLitera
     }
     
     public subscript(index: Int) -> T {
-        verifyBounds(index)
-        let t = getChunk(index)
+        verifyBounds(index: index)
+        let t = getChunk(index: index)
         return t.chunk[t.offset]
     }
     
@@ -159,7 +158,7 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLitera
             return self.conj(element)
         }
         
-        verifyBounds(index)
+        verifyBounds(index: index)
         
         if tailOffset() <= index {
             var newTail = tail
@@ -167,12 +166,12 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, ArrayLitera
             return PersistentVector(count: count, shift: shift, root: root, tail: newTail)
         }
         
-        let newRoot = root.assoc(index: index, shift: shift, element: element)
+        let newRoot = root.assoc(index, shift: shift, element: element)
         return PersistentVector(count: count, shift: shift, root: newRoot, tail: tail)
     }
     
-    public func generate() -> ChunkedGenerator<T> {
-        return ChunkedGenerator(f: {self.getChunk($0)}, start: 0, end: count)
+    public func makeIterator() -> Iterator {
+        return ChunkedIterator(f: {self.getChunk(index: $0)}, start: 0, end: count)
     }
     
     public var hashValue: Int { return count }
@@ -193,7 +192,6 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     
     init(vector: PersistentVector<T>, start: Int, end: Int) {
         assert(end >= start)
-//        assert(end - start <= vector.count)
         self.v = vector
         self.start = start
         self.end = end
@@ -201,7 +199,6 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     
     init(vector: Subvec, start: Int, end: Int) {
         assert(end >= start)
-//        assert(end - start <= vector.count)
         self.v = vector.v
         self.start = vector.start + start
         self.end = vector.start + end
@@ -209,8 +206,8 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     
     public var count: Int { return end - start }
     
-    public func conj(element: T) -> Subvec {
-        return Subvec(vector: v.assoc(end, element), start: start, end: end + 1)
+    public func conj(_ element: T) -> Subvec {
+        return Subvec(vector: v.assoc(index: end, element), start: start, end: end + 1)
     }
     
     public func pop() -> Subvec {
@@ -221,11 +218,11 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     public subscript(index: Int) -> T { return v[index + start] }
     
     public func assoc(index: Int, _ element: T) -> Subvec {
-        return Subvec(vector: v.assoc(index + start, element), start: start, end: end)
+        return Subvec(vector: v.assoc(index: index + start, element), start: start, end: end)
     }
     
-    public func generate() -> ChunkedGenerator<T> {
-        return ChunkedGenerator(f: {self.v.getChunk($0)}, start: start, end: end)
+    public func makeIterator() -> ChunkedIterator<T> {
+        return ChunkedIterator<T>(f: {self.v.getChunk(index: $0)}, start: start, end: end)
     }
     
     public var hashValue: Int { return count }
@@ -255,16 +252,18 @@ public struct TransientVector<T: Equatable> {
         
         self.tail = []
         self.tail.reserveCapacity(32)
-        self.tail.extend(tail)
+        self.tail.append(contentsOf: tail)
     }
     
     private init() {
-        self.init(count: 0, shift: 5, root: TreeNode(transientID: ++transientVectorCounter, children: []), tail: [])
+        transientVectorCounter += 1
+        self.init(count: 0, shift: 5, root: TreeNode(transientID: transientVectorCounter, children: []), tail: [])
     }
     
     init(vector: PersistentVector<T>, count: Int) {
         // XXX count arg exists because the 1.2 compiler segfaults on vector.count
-        self.init(count: count, shift: vector.shift, root: vector.root.transientVersion(transientID: ++transientVectorCounter), tail: vector.tail)
+        transientVectorCounter += 1
+        self.init(count: count, shift: vector.shift, root: vector.root.transientVersion(transientVectorCounter), tail: vector.tail)
     }
     
     private func tailOffset() -> Int {
@@ -282,8 +281,8 @@ public struct TransientVector<T: Equatable> {
         assert(tail.capacity == 32)
     }
     
-    private func transientChunk(index: Int, inout chunk: [T]) {
-        chunk = index < tailOffset() ? root.getChunk(index: index, shift: self.shift) : tail
+    private func transientChunk(index: Int,  chunk: inout [T]) {
+        chunk = index < tailOffset() ? root.getChunk(index, shift: self.shift) : tail
     }
     
     public mutating func conj(element: T) -> TransientVector {
@@ -299,14 +298,14 @@ public struct TransientVector<T: Equatable> {
             tail.append(element)
             
             if count >> 5 > 1 << shift {
-                root = TreeNode<T>(transientID: root.editID, children: [root, tailNode.newPath(transientID: root.editID, shift: shift)])
+                root = TreeNode<T>(transientID: root.editID, children: [root, tailNode.newPath(root.editID, shift: shift)])
                 shift += 5
             } else {
-                root = root.transientPushTail(transientID: root.editID, count: count, shift: shift, tailNode: tailNode)
+                root = root.transientPushTail(root.editID, count: count, shift: shift, tailNode: tailNode)
             }
         }
         
-        count++
+        count += 1
         return self
     }
     
@@ -317,9 +316,9 @@ public struct TransientVector<T: Equatable> {
         
         var newTail = [T]()
         newTail.reserveCapacity(tail.count)
-        newTail.extend(tail)
+        newTail.append(contentsOf: tail)
         
-        return PersistentVector(count: count, shift: shift, root: root, tail: newTail)
+        return PersistentVector<T>(count: count, shift: shift, root: root, tail: newTail)
     }
     
     public mutating func pop() -> TransientVector {
@@ -335,10 +334,10 @@ public struct TransientVector<T: Equatable> {
         default:
             assert(count - 2 < tailOffset())
             
-            transientChunk(count - 2, chunk: &tail)
+            transientChunk(index: count - 2, chunk: &tail)
             
-            if let r = root.transientPopTail(transientID: root.editID, count: count, shift: shift) {
-                if let r2 = r.onlyChildNode() where shift > 5 {
+            if let r = root.transientPopTail(root.editID, count: count, shift: shift) {
+                if let r2 = r.onlyChildNode(), shift > 5 {
                     shift -= 5
                     root = r2
                 } else {
@@ -350,7 +349,7 @@ public struct TransientVector<T: Equatable> {
             }
         }
         
-        count--
+        count -= 1
         return self
     }
     
@@ -358,15 +357,15 @@ public struct TransientVector<T: Equatable> {
         verifyTransient()
         
         if index == count {
-            return self.conj(element)
+            return self.conj(element: element)
         }
         
-        verifyBounds(index)
+        verifyBounds(index: index)
         
         if tailOffset() <= index {
             tail[index &  0x01f] = element
         } else {
-            root = root.transientAssoc(transientID: root.editID, index: index, shift: shift, element: element)
+            root = root.transientAssoc(root.editID, index: index, shift: shift, element: element)
         }
         
         return self
@@ -377,22 +376,54 @@ public struct TransientVector<T: Equatable> {
 //  MARK: - Extensions
 //
 
-extension PersistentVector : Printable, DebugPrintable, CollectionType, Sliceable {
-    public var description: String { return seqDescription(self, "[", "]") }
-    public var debugDescription: String { return seqDebugDescription(self, "[", "]") }
-    public var startIndex: Int { return 0 }
-    public var endIndex: Int { return self.count }
+
+ 
+ extension PersistentVector : CustomStringConvertible, CustomDebugStringConvertible // Collection , Sliceable
+ {
+    public typealias Index = Int
+
+    public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
+    
+    public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
+    
+    public var startIndex: Index { return 0 }
+    
+    public var endIndex: Index { return self.count }
+    
+    /*
     public subscript(bounds: Range<Int>) -> Subvec<T> {
-        return Subvec(vector: self, start: bounds.startIndex, end: bounds.endIndex)
+        return Subvec(vector: self, start: bounds.lowerBound, end: bounds.upperBound)
     }
+ 
+    public func index(after i: Index) -> Index {
+        return 0 // ??
+    }
+     */
+    
+ }
+
+
+ 
+extension Subvec : CustomStringConvertible, CustomDebugStringConvertible // Collection, Sliceable
+{
+    public typealias Index = Int
+    
+    public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
+    
+    public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
+    
+    public var startIndex: Index { return 0 }
+    public var endIndex: Index { return self.count }
+    
+    /*
+    public subscript(bounds: Range<Int>) -> Subvec<T> {
+        return Subvec(vector: self, start: bounds.lowerBound, end: bounds.upperBound)
+    }
+ 
+    public func index(after i: Index) -> Index {
+        return 0 // ??
+    }
+     */
+    
 }
 
-extension Subvec : Printable, DebugPrintable, CollectionType, Sliceable {
-    public var description: String { return seqDescription(self, "[", "]") }
-    public var debugDescription: String { return seqDebugDescription(self, "[", "]") }
-    public var startIndex: Int { return 0 }
-    public var endIndex: Int { return self.count }
-    public subscript(bounds: Range<Int>) -> Subvec<T> {
-        return Subvec(vector: self, start: bounds.startIndex, end: bounds.endIndex)
-    }
-}

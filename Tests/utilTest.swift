@@ -3,8 +3,7 @@
 //  ruminant
 //
 //  Created by Stefan Boether on 28.12.17.
-//  Copyright © 2017 Gloria42. All rights reserved.
-//
+
 
 import XCTest
 
