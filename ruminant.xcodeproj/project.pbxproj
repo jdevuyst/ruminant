@@ -11,6 +11,8 @@
 		F8D78DA51FF4D54900A938DA /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA11FF4D2BB00A938DA /* util.swift */; };
 		F8D78DA71FF4D65B00A938DA /* chunkediterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */; };
 		F8D78DA91FF4D79600A938DA /* tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA81FF4D79600A938DA /* tree.swift */; };
+		F8FEA3571FF4EDEE001E9CBF /* utilTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8FEA3461FF4EC11001E9CBF /* utilTest.swift */; };
+		F8FEA3581FF4EE06001E9CBF /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA11FF4D2BB00A938DA /* util.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,10 +34,20 @@
 		F8D78DA21FF4D2BB00A938DA /* vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = vector.swift; sourceTree = "<group>"; };
 		F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediterator.swift; sourceTree = "<group>"; };
 		F8D78DA81FF4D79600A938DA /* tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tree.swift; sourceTree = "<group>"; };
+		F8FEA3461FF4EC11001E9CBF /* utilTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utilTest.swift; sourceTree = "<group>"; };
+		F8FEA34F1FF4EDDF001E9CBF /* ruminantTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F8FEA3531FF4EDDF001E9CBF /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		F8CEBF291FF4D0740040F9FF /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FEA34C1FF4EDDF001E9CBF /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -48,12 +60,11 @@
 		F8CEBF231FF4D0740040F9FF = {
 			isa = PBXGroup;
 			children = (
-				F8D78DA11FF4D2BB00A938DA /* util.swift */,
-				F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */,
-				F8D78DA21FF4D2BB00A938DA /* vector.swift */,
-				F8D78DA81FF4D79600A938DA /* tree.swift */,
+				F8FEA3431FF4EB71001E9CBF /* Source */,
+				F8FEA3501FF4EDDF001E9CBF /* Tests */,
 				F8CEBF2F1FF4D0740040F9FF /* main.swift */,
 				F8CEBF2D1FF4D0740040F9FF /* Products */,
+				F8FEA3481FF4EC61001E9CBF /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -61,8 +72,36 @@
 			isa = PBXGroup;
 			children = (
 				F8CEBF2C1FF4D0740040F9FF /* ruminant */,
+				F8FEA34F1FF4EDDF001E9CBF /* ruminantTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		F8FEA3431FF4EB71001E9CBF /* Source */ = {
+			isa = PBXGroup;
+			children = (
+				F8D78DA11FF4D2BB00A938DA /* util.swift */,
+				F8D78DA21FF4D2BB00A938DA /* vector.swift */,
+				F8D78DA81FF4D79600A938DA /* tree.swift */,
+				F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */,
+			);
+			path = Source;
+			sourceTree = "<group>";
+		};
+		F8FEA3481FF4EC61001E9CBF /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F8FEA3501FF4EDDF001E9CBF /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				F8FEA3461FF4EC11001E9CBF /* utilTest.swift */,
+				F8FEA3531FF4EDDF001E9CBF /* Info.plist */,
+			);
+			path = Tests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -85,6 +124,23 @@
 			productReference = F8CEBF2C1FF4D0740040F9FF /* ruminant */;
 			productType = "com.apple.product-type.tool";
 		};
+		F8FEA34E1FF4EDDF001E9CBF /* ruminantTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F8FEA3541FF4EDDF001E9CBF /* Build configuration list for PBXNativeTarget "ruminantTests" */;
+			buildPhases = (
+				F8FEA34B1FF4EDDF001E9CBF /* Sources */,
+				F8FEA34C1FF4EDDF001E9CBF /* Frameworks */,
+				F8FEA34D1FF4EDDF001E9CBF /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ruminantTests;
+			productName = ruminantTests;
+			productReference = F8FEA34F1FF4EDDF001E9CBF /* ruminantTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -96,6 +152,10 @@
 				ORGANIZATIONNAME = Gloria42;
 				TargetAttributes = {
 					F8CEBF2B1FF4D0740040F9FF = {
+						CreatedOnToolsVersion = 9.2;
+						ProvisioningStyle = Automatic;
+					};
+					F8FEA34E1FF4EDDF001E9CBF = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 					};
@@ -114,9 +174,20 @@
 			projectRoot = "";
 			targets = (
 				F8CEBF2B1FF4D0740040F9FF /* ruminant */,
+				F8FEA34E1FF4EDDF001E9CBF /* ruminantTests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		F8FEA34D1FF4EDDF001E9CBF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F8CEBF281FF4D0740040F9FF /* Sources */ = {
@@ -127,6 +198,15 @@
 				F8D78DA91FF4D79600A938DA /* tree.swift in Sources */,
 				F8CEBF301FF4D0740040F9FF /* main.swift in Sources */,
 				F8D78DA51FF4D54900A938DA /* util.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F8FEA34B1FF4EDDF001E9CBF /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F8FEA3581FF4EE06001E9CBF /* util.swift in Sources */,
+				F8FEA3571FF4EDEE001E9CBF /* utilTest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -259,6 +339,34 @@
 			};
 			name = Release;
 		};
+		F8FEA3551FF4EDDF001E9CBF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6M3492HNJ9;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.gloria42.ruminantTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Debug;
+		};
+		F8FEA3561FF4EDDF001E9CBF /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 6M3492HNJ9;
+				INFOPLIST_FILE = Tests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = org.gloria42.ruminantTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -276,6 +384,15 @@
 			buildConfigurations = (
 				F8CEBF341FF4D0740040F9FF /* Debug */,
 				F8CEBF351FF4D0740040F9FF /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F8FEA3541FF4EDDF001E9CBF /* Build configuration list for PBXNativeTarget "ruminantTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F8FEA3551FF4EDDF001E9CBF /* Debug */,
+				F8FEA3561FF4EDDF001E9CBF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
