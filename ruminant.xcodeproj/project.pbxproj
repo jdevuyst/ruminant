@@ -67,7 +67,7 @@
 		F8CEBF231FF4D0740040F9FF = {
 			isa = PBXGroup;
 			children = (
-				F8FEA3431FF4EB71001E9CBF /* Source */,
+				F8FEA3431FF4EB71001E9CBF /* Sources */,
 				F8FEA3501FF4EDDF001E9CBF /* Tests */,
 				F8CEBF2F1FF4D0740040F9FF /* main.swift */,
 				F8CEBF2D1FF4D0740040F9FF /* Products */,
@@ -84,7 +84,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		F8FEA3431FF4EB71001E9CBF /* Source */ = {
+		F8FEA3431FF4EB71001E9CBF /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				F8D78DA11FF4D2BB00A938DA /* util.swift */,
@@ -92,7 +92,7 @@
 				F8D78DA81FF4D79600A938DA /* tree.swift */,
 				F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */,
 			);
-			path = Source;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		F8FEA3481FF4EC61001E9CBF /* Frameworks */ = {
