@@ -14,6 +14,15 @@ assert(v2 == ["a", "b", "C", "d"])
 assert(v.pop() == v2[0..<2])
 assert(map(v, {$0.uppercaseString}) == ["A", "B", "C"])
 ```
+## Integration
+
+You should integrate it into your project with the Swift-Package Manager
+
+```swift
+dependencies: [
+.package(url: "http://github.com/<stefc|jdevuyst>/ruminant", from: "1.0.0")
+],
+```
 
 ## License
 

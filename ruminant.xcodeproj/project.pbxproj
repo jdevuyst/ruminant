@@ -38,6 +38,7 @@
 		F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediterator.swift; sourceTree = "<group>"; };
 		F8D78DA81FF4D79600A938DA /* tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tree.swift; sourceTree = "<group>"; };
 		F8EB4A3F1FF61FAA00FFBAD1 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		F8EB4A421FF6294900FFBAD1 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F8F025F01FF5787F0078BC1B /* vectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vectorTest.swift; sourceTree = "<group>"; };
 		F8FEA3461FF4EC11001E9CBF /* utilTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utilTest.swift; sourceTree = "<group>"; };
 		F8FEA34F1FF4EDDF001E9CBF /* ruminantTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -66,6 +67,7 @@
 		F8CEBF231FF4D0740040F9FF = {
 			isa = PBXGroup;
 			children = (
+				F8EB4A421FF6294900FFBAD1 /* README.md */,
 				F8EB4A3F1FF61FAA00FFBAD1 /* Package.swift */,
 				F8FEA3431FF4EB71001E9CBF /* Sources */,
 				F8FEA3501FF4EDDF001E9CBF /* Tests */,
