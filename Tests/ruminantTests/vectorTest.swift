@@ -5,6 +5,7 @@
 
 
 import XCTest
+@testable import ruminant
 
 class VectorTest: XCTestCase {
 

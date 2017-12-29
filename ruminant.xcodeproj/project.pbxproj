@@ -64,6 +64,16 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F81E288C1FF643A200E9BC05 /* ruminantTests */ = {
+			isa = PBXGroup;
+			children = (
+				F8FEA3461FF4EC11001E9CBF /* utilTest.swift */,
+				F8FEA3591FF4FB8D001E9CBF /* chunkediteratorTest.swift */,
+				F8F025F01FF5787F0078BC1B /* vectorTest.swift */,
+			);
+			path = ruminantTests;
+			sourceTree = "<group>";
+		};
 		F8CEBF231FF4D0740040F9FF = {
 			isa = PBXGroup;
 			children = (
@@ -106,9 +116,7 @@
 		F8FEA3501FF4EDDF001E9CBF /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				F8FEA3461FF4EC11001E9CBF /* utilTest.swift */,
-				F8FEA3591FF4FB8D001E9CBF /* chunkediteratorTest.swift */,
-				F8F025F01FF5787F0078BC1B /* vectorTest.swift */,
+				F81E288C1FF643A200E9BC05 /* ruminantTests */,
 				F8FEA3531FF4EDDF001E9CBF /* Info.plist */,
 			);
 			path = Tests;
@@ -163,7 +171,7 @@
 				TargetAttributes = {
 					F8CEBF2B1FF4D0740040F9FF = {
 						CreatedOnToolsVersion = 9.2;
-						ProvisioningStyle = Automatic;
+						ProvisioningStyle = Manual;
 					};
 					F8FEA34E1FF4EDDF001E9CBF = {
 						CreatedOnToolsVersion = 9.2;
@@ -336,9 +344,10 @@
 		F8CEBF341FF4D0740040F9FF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 6M3492HNJ9;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -346,9 +355,10 @@
 		F8CEBF351FF4D0740040F9FF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = 6M3492HNJ9;
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
@@ -356,6 +366,7 @@
 		F8FEA3551FF4EDDF001E9CBF /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6M3492HNJ9;
@@ -363,6 +374,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.gloria42.ruminantTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
@@ -370,6 +382,7 @@
 		F8FEA3561FF4EDDF001E9CBF /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 6M3492HNJ9;
@@ -377,6 +390,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = org.gloria42.ruminantTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.0;
 			};
 			name = Release;

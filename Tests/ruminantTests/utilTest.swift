@@ -6,6 +6,7 @@
 
 
 import XCTest
+@testable import ruminant
 
 class UtilTest: XCTestCase {
 
