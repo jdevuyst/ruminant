@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F8CEBF301FF4D0740040F9FF /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8CEBF2F1FF4D0740040F9FF /* main.swift */; };
 		F8D78DA51FF4D54900A938DA /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA11FF4D2BB00A938DA /* util.swift */; };
 		F8D78DA71FF4D65B00A938DA /* chunkediterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */; };
 		F8D78DA91FF4D79600A938DA /* tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8D78DA81FF4D79600A938DA /* tree.swift */; };
@@ -34,11 +33,11 @@
 
 /* Begin PBXFileReference section */
 		F8CEBF2C1FF4D0740040F9FF /* ruminant */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ruminant; sourceTree = BUILT_PRODUCTS_DIR; };
-		F8CEBF2F1FF4D0740040F9FF /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		F8D78DA11FF4D2BB00A938DA /* util.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; };
 		F8D78DA21FF4D2BB00A938DA /* vector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = vector.swift; sourceTree = "<group>"; };
 		F8D78DA61FF4D65B00A938DA /* chunkediterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediterator.swift; sourceTree = "<group>"; };
 		F8D78DA81FF4D79600A938DA /* tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tree.swift; sourceTree = "<group>"; };
+		F8EB4A3F1FF61FAA00FFBAD1 /* Package.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
 		F8F025F01FF5787F0078BC1B /* vectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vectorTest.swift; sourceTree = "<group>"; };
 		F8FEA3461FF4EC11001E9CBF /* utilTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utilTest.swift; sourceTree = "<group>"; };
 		F8FEA34F1FF4EDDF001E9CBF /* ruminantTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -67,9 +66,9 @@
 		F8CEBF231FF4D0740040F9FF = {
 			isa = PBXGroup;
 			children = (
+				F8EB4A3F1FF61FAA00FFBAD1 /* Package.swift */,
 				F8FEA3431FF4EB71001E9CBF /* Sources */,
 				F8FEA3501FF4EDDF001E9CBF /* Tests */,
-				F8CEBF2F1FF4D0740040F9FF /* main.swift */,
 				F8CEBF2D1FF4D0740040F9FF /* Products */,
 				F8FEA3481FF4EC61001E9CBF /* Frameworks */,
 			);
@@ -205,7 +204,6 @@
 			files = (
 				F8D78DA71FF4D65B00A938DA /* chunkediterator.swift in Sources */,
 				F8D78DA91FF4D79600A938DA /* tree.swift in Sources */,
-				F8CEBF301FF4D0740040F9FF /* main.swift in Sources */,
 				F8D78DA51FF4D54900A938DA /* util.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
