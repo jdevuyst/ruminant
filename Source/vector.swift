@@ -29,19 +29,16 @@ public protocol PersistentVectorType: Hashable, Sequence {
     func assoc(index: Int, _ element: Element) -> Self
 }
 
-public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U) -> Bool where T.Iterator.Element == U.Iterator.Element, T.Iterator.Element: Equatable {
-    if lhs.count != rhs.count {
+public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U) -> Bool
+    where T.Iterator.Element == U.Iterator.Element, T.Iterator.Element: Equatable
+{
+    guard lhs.count == rhs.count else {
         return false
     }
     
-    var rg = rhs.makeIterator()
-    for x in lhs {
-        if x != rg.next()! {
-            return false
-        }
-    }
-    
-    return true
+    return !zip(rhs, lhs)
+        .map { $0.0 == $0.1 }
+        .contains(where: { !$0 })
 }
 
 //
@@ -51,6 +48,8 @@ public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U)
 public struct PersistentVector<T: Equatable> : PersistentVectorType, ExpressibleByArrayLiteral {
     
     public typealias Iterator = ChunkedIterator<T>
+    public typealias Index = Int
+    public typealias SubSequence = Subvec<T>
     
     public let count: Int
     let shift: Int
@@ -79,6 +78,12 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
         self.init(count: v.count, shift: v.shift, root: v.root, tail: v.tail)
     }
     
+    public init<S : Sequence>(_ seq: S)  where S.Element == Element
+    {
+        let v = seq.reduce(PersistentVector()) { (accu, current) in accu.conj(current) }
+        self.init(count: v.count, shift: v.shift, root: v.root, tail: v.tail)
+    }
+    
     private func tailOffset() -> Int {
         let r = count < 32 ? 0 : (((count - 1) >> 5) << 5)
         assert(r == count - tail.count)
@@ -89,7 +94,7 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
         precondition(index >= 0 && index < count, "Index \(index) is out of bounds for vector of size \(count)")
     }
     
-    internal func getChunk(index: Int) -> (chunk: [T], offset: Int) {
+    internal func getChunk(index: Index) -> (chunk: [T], offset: Int) {
         let chunk = index < tailOffset() ? root.getChunk(index, shift: self.shift) : tail
         return (chunk: chunk, offset: index & 0x01f)
     }
@@ -147,13 +152,17 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
         }
     }
     
-    public subscript(index: Int) -> T {
+    public subscript(index: Index) -> T {
         verifyBounds(index: index)
         let t = getChunk(index: index)
         return t.chunk[t.offset]
     }
     
-    public func assoc(index: Int, _ element: T) -> PersistentVector {
+    public subscript(bounds: Range<Index>) -> SubSequence {
+        return Subvec(vector: self, start: bounds.lowerBound, end: bounds.upperBound)
+    }
+    
+    public func assoc(index: Index, _ element: T) -> PersistentVector {
         if index == count {
             return self.conj(element)
         }
@@ -186,18 +195,22 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
 //
 
 public struct Subvec<T: Equatable>: PersistentVectorType {
-    private let v: PersistentVector<T>
-    private let start: Int
-    private let end: Int
+    public typealias Index = Int
+    public typealias Iterator = ChunkedIterator<T>
+    public typealias SubSequence = Subvec<T>
     
-    init(vector: PersistentVector<T>, start: Int, end: Int) {
+    private let v: PersistentVector<T>
+    private let start: Index
+    private let end: Index
+    
+    init(vector: PersistentVector<T>, start: Index, end: Index) {
         assert(end >= start)
         self.v = vector
         self.start = start
         self.end = end
     }
     
-    init(vector: Subvec, start: Int, end: Int) {
+    init(vector: Subvec, start: Index, end: Index) {
         assert(end >= start)
         self.v = vector.v
         self.start = vector.start + start
@@ -206,22 +219,26 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     
     public var count: Int { return end - start }
     
-    public func conj(_ element: T) -> Subvec {
+    public func conj(_ element: T) -> SubSequence {
         return Subvec(vector: v.assoc(index: end, element), start: start, end: end + 1)
     }
     
-    public func pop() -> Subvec {
+    public func pop() -> SubSequence {
         precondition(count > 0, "Cannot pop() an empty vector")
         return Subvec(vector: v, start: start, end: end - 1)
     }
     
-    public subscript(index: Int) -> T { return v[index + start] }
-    
-    public func assoc(index: Int, _ element: T) -> Subvec {
+    public func assoc(index: Index, _ element: T) -> SubSequence {
         return Subvec(vector: v.assoc(index: index + start, element), start: start, end: end)
     }
     
-    public func makeIterator() -> ChunkedIterator<T> {
+    public subscript(index: Index) -> T { return v[index + start] }
+    
+    public subscript(bounds: Range<Index>) -> SubSequence {
+        return Subvec(vector: self, start: bounds.lowerBound, end: bounds.upperBound)
+    }
+    
+    public func makeIterator() -> Iterator {
         return ChunkedIterator<T>(f: {self.v.getChunk(index: $0)}, start: start, end: end)
     }
     
@@ -376,54 +393,39 @@ public struct TransientVector<T: Equatable> {
 //  MARK: - Extensions
 //
 
-
- 
- extension PersistentVector : CustomStringConvertible, CustomDebugStringConvertible // Collection , Sliceable
- {
-    public typealias Index = Int
-
-    public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
-    
-    public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
-    
-    public var startIndex: Index { return 0 }
-    
-    public var endIndex: Index { return self.count }
-    
-    /*
-    public subscript(bounds: Range<Int>) -> Subvec<T> {
-        return Subvec(vector: self, start: bounds.lowerBound, end: bounds.upperBound)
-    }
- 
-    public func index(after i: Index) -> Index {
-        return 0 // ??
-    }
-     */
-    
- }
-
-
- 
-extension Subvec : CustomStringConvertible, CustomDebugStringConvertible // Collection, Sliceable
+extension PersistentVector : CustomStringConvertible, CustomDebugStringConvertible
 {
-    public typealias Index = Int
-    
     public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
-    
+
     public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
-    
+}
+ 
+extension PersistentVector : Collection
+{
     public var startIndex: Index { return 0 }
+    
     public var endIndex: Index { return self.count }
     
-    /*
-    public subscript(bounds: Range<Int>) -> Subvec<T> {
-        return Subvec(vector: self, start: bounds.lowerBound, end: bounds.upperBound)
-    }
- 
     public func index(after i: Index) -> Index {
-        return 0 // ??
+        assert( i < endIndex)
+        return i + 1
     }
-     */
-    
 }
 
+extension Subvec : CustomStringConvertible, CustomDebugStringConvertible
+{
+    public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
+
+    public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
+}
+
+extension Subvec : Collection
+{
+    public var startIndex: Index { return 0 }
+    public var endIndex: Index { return self.count }
+    
+    public func index(after i: Index) -> Index {
+        assert( i < endIndex)
+        return i + 1
+    }
+}

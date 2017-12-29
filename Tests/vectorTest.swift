@@ -47,4 +47,27 @@ class VectorTest: XCTestCase {
         
         XCTAssertEqual(1, seq[1], "subscript")
     }
+    
+    func testCompare() {
+        let seqA : PersistentVector<Int> = [0,1,2,3,5,6]
+        
+        let seqB = PersistentVector<Int>().conj(0).conj(1).conj(2).conj(3).conj(5).conj(6)
+        
+        XCTAssert(seqA == seqB, "Sequences not equal")
+    }
+    
+    func testSubVector() {
+        let arr = [0, 1, 1, 2, 3, 5, 8, 13, 21, 34, 55, 89, 144, 233, 377,
+                   610, 987, 1597, 2584, 4181,6765, 10946, 17711, 28657, 46368,
+                   75025, 121393, 196418, 317811, 514229,832040, 1346269]
+        let seq = PersistentVector(arr)
+        
+        XCTAssert( PersistentVector(arr[...5]) == seq[...5])
+        XCTAssert( PersistentVector(arr[..<5]) == seq[..<5])
+        
+        XCTAssert( PersistentVector(arr[5...15]) == seq[5...15])
+        XCTAssert( PersistentVector(arr[5..<15]) == seq[5..<15])
+        
+        XCTAssert( PersistentVector(arr[5...]) == seq[5...])
+    }
 }
