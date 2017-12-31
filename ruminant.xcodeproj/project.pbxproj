@@ -50,6 +50,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		F82EF3431FF927530056CDE2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		OBJ_10 /* util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; };
 		OBJ_11 /* vector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vector.swift; sourceTree = "<group>"; };
 		OBJ_14 /* chunkediteratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediteratorTest.swift; sourceTree = "<group>"; };
@@ -112,6 +113,7 @@
 		OBJ_5 = {
 			isa = PBXGroup;
 			children = (
+				F82EF3431FF927530056CDE2 /* README.md */,
 				OBJ_6 /* Package.swift */,
 				OBJ_7 /* Sources */,
 				OBJ_12 /* Tests */,
