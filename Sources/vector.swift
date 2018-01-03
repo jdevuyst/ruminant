@@ -186,7 +186,7 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
     public var hashValue: Int { return count }
     
     public func transient() -> TransientVector<T> {
-        return TransientVector(vector: self, count: count)
+        return TransientVector(vector: self)
     }
 }
 
@@ -252,7 +252,10 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
 private var transientVectorCounter = 0
 
 public struct TransientVector<T: Equatable> {
-    private var count: Int
+    
+    public typealias Index = Int
+    
+    public var count: Int
     private var shift: Int
     private var root: Node<T>
     private var tail: [T]
@@ -277,10 +280,9 @@ public struct TransientVector<T: Equatable> {
         self.init(count: 0, shift: 5, root: TreeNode(transientID: transientVectorCounter, children: []), tail: [])
     }
     
-    init(vector: PersistentVector<T>, count: Int) {
-        // XXX count arg exists because the 1.2 compiler segfaults on vector.count
+    init(vector: PersistentVector<T>) {
         transientVectorCounter += 1
-        self.init(count: count, shift: vector.shift, root: vector.root.transientVersion(transientVectorCounter), tail: vector.tail)
+        self.init(count: vector.count, shift: vector.shift, root: vector.root.transientVersion(transientVectorCounter), tail: vector.tail)
     }
     
     private func tailOffset() -> Int {
@@ -300,6 +302,11 @@ public struct TransientVector<T: Equatable> {
     
     private func transientChunk(index: Int,  chunk: inout [T]) {
         chunk = index < tailOffset() ? root.getChunk(index, shift: self.shift) : tail
+    }
+    
+    internal func getChunk(index: Index) -> (chunk: [T], offset: Int) {
+        let chunk = index < tailOffset() ? root.getChunk(index, shift: self.shift) : tail
+        return (chunk: chunk, offset: index & 0x01f)
     }
     
     public mutating func conj(element: T) -> TransientVector {
@@ -387,6 +394,16 @@ public struct TransientVector<T: Equatable> {
         
         return self
     }
+    
+    public var startIndex: Index { return 0 }
+    
+    public subscript(index: Index) -> T {
+        verifyBounds(index: index)
+        let t = getChunk(index: index)
+        return t.chunk[t.offset]
+    }
+    
+    
 }
 
 //
@@ -396,10 +413,10 @@ public struct TransientVector<T: Equatable> {
 extension PersistentVector : CustomStringConvertible, CustomDebugStringConvertible
 {
     public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
-
+    
     public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
 }
- 
+
 extension PersistentVector : Collection
 {
     public var startIndex: Index { return 0 }
@@ -415,7 +432,7 @@ extension PersistentVector : Collection
 extension Subvec : CustomStringConvertible, CustomDebugStringConvertible
 {
     public var description: String { return seqDescription(xs: self, ldelim: "[", rdelim: "]") }
-
+    
     public var debugDescription: String { return seqDebugDescription(xs: self, ldelim: "[", rdelim: "]") }
 }
 
@@ -429,3 +446,4 @@ extension Subvec : Collection
         return i + 1
     }
 }
+

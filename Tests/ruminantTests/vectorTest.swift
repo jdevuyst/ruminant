@@ -70,5 +70,16 @@ class VectorTest: XCTestCase {
         XCTAssert( PersistentVector(arr[5..<15]) == seq[5..<15])
         
         XCTAssert( PersistentVector(arr[5...]) == seq[5...])
+        
+        let sum = seq.reduce(0,+)
+        XCTAssertEqual(3524577, sum)
+        
+        let seq2 = seq.assoc(index: 30, 0)
+        let sum2 = seq2.reduce(0,+)
+        XCTAssertEqual(2692537, sum2)
+        
+        let sum3 = seq.reduce(0,+)
+        XCTAssertEqual(3524577, sum3)
+        
     }
 }
