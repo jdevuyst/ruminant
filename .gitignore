@@ -10,6 +10,7 @@ build/
 *.perspectivev3
 !default.perspectivev3
 xcuserdata
+*.xcworkspace
 *.xccheckout
 *.moved-aside
 DerivedData
@@ -24,3 +25,6 @@ DerivedData
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
 # Pods/
+
+.build/
+Package.resolved

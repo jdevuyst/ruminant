@@ -1,0 +1,466 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		"ruminant::ruminantPackageTests::ProductTarget" /* ruminantPackageTests */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = OBJ_48 /* Build configuration list for PBXAggregateTarget "ruminantPackageTests" */;
+			buildPhases = (
+			);
+			dependencies = (
+				OBJ_51 /* PBXTargetDependency */,
+			);
+			name = ruminantPackageTests;
+			productName = ruminantPackageTests;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		OBJ_25 /* Package.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_6 /* Package.swift */; };
+		OBJ_31 /* chunkediteratorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_14 /* chunkediteratorTest.swift */; };
+		OBJ_32 /* utilTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_15 /* utilTest.swift */; };
+		OBJ_33 /* vectorTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_16 /* vectorTest.swift */; };
+		OBJ_35 /* ruminant.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = "ruminant::ruminant::Product" /* ruminant.framework */; };
+		OBJ_42 /* chunkediterator.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_8 /* chunkediterator.swift */; };
+		OBJ_43 /* tree.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_9 /* tree.swift */; };
+		OBJ_44 /* util.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_10 /* util.swift */; };
+		OBJ_45 /* vector.swift in Sources */ = {isa = PBXBuildFile; fileRef = OBJ_11 /* vector.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		F8957D001FF8DFA50055D94C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = "ruminant::ruminant";
+			remoteInfo = ruminant;
+		};
+		F8957D011FF8DFA70055D94C /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = OBJ_1 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = "ruminant::ruminantTests";
+			remoteInfo = ruminantTests;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		F82EF3431FF927530056CDE2 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		OBJ_10 /* util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = util.swift; sourceTree = "<group>"; };
+		OBJ_11 /* vector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vector.swift; sourceTree = "<group>"; };
+		OBJ_14 /* chunkediteratorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediteratorTest.swift; sourceTree = "<group>"; };
+		OBJ_15 /* utilTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = utilTest.swift; sourceTree = "<group>"; };
+		OBJ_16 /* vectorTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = vectorTest.swift; sourceTree = "<group>"; };
+		OBJ_6 /* Package.swift */ = {isa = PBXFileReference; explicitFileType = sourcecode.swift; path = Package.swift; sourceTree = "<group>"; };
+		OBJ_8 /* chunkediterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediterator.swift; sourceTree = "<group>"; };
+		OBJ_9 /* tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tree.swift; sourceTree = "<group>"; };
+		"ruminant::ruminant::Product" /* ruminant.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ruminant.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		"ruminant::ruminantTests::Product" /* ruminantTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		OBJ_34 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_35 /* ruminant.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_46 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 0;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		OBJ_12 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_13 /* ruminantTests */,
+			);
+			name = Tests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_13 /* ruminantTests */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_14 /* chunkediteratorTest.swift */,
+				OBJ_15 /* utilTest.swift */,
+				OBJ_16 /* vectorTest.swift */,
+			);
+			name = ruminantTests;
+			path = Tests/ruminantTests;
+			sourceTree = SOURCE_ROOT;
+		};
+		OBJ_17 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				"ruminant::ruminantTests::Product" /* ruminantTests.xctest */,
+				"ruminant::ruminant::Product" /* ruminant.framework */,
+			);
+			name = Products;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		OBJ_5 = {
+			isa = PBXGroup;
+			children = (
+				F82EF3431FF927530056CDE2 /* README.md */,
+				OBJ_6 /* Package.swift */,
+				OBJ_7 /* Sources */,
+				OBJ_12 /* Tests */,
+				OBJ_17 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		OBJ_7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				OBJ_8 /* chunkediterator.swift */,
+				OBJ_9 /* tree.swift */,
+				OBJ_10 /* util.swift */,
+				OBJ_11 /* vector.swift */,
+			);
+			path = Sources;
+			sourceTree = SOURCE_ROOT;
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		"ruminant::SwiftPMPackageDescription" /* ruminantPackageDescription */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_21 /* Build configuration list for PBXNativeTarget "ruminantPackageDescription" */;
+			buildPhases = (
+				OBJ_24 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ruminantPackageDescription;
+			productName = ruminantPackageDescription;
+			productType = "com.apple.product-type.framework";
+		};
+		"ruminant::ruminant" /* ruminant */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_38 /* Build configuration list for PBXNativeTarget "ruminant" */;
+			buildPhases = (
+				OBJ_41 /* Sources */,
+				OBJ_46 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = ruminant;
+			productName = ruminant;
+			productReference = "ruminant::ruminant::Product" /* ruminant.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		"ruminant::ruminantTests" /* ruminantTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = OBJ_27 /* Build configuration list for PBXNativeTarget "ruminantTests" */;
+			buildPhases = (
+				OBJ_30 /* Sources */,
+				OBJ_34 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				OBJ_36 /* PBXTargetDependency */,
+			);
+			name = ruminantTests;
+			productName = ruminantTests;
+			productReference = "ruminant::ruminantTests::Product" /* ruminantTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		OBJ_1 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 9999;
+			};
+			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "ruminant" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = OBJ_5;
+			productRefGroup = OBJ_17 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				"ruminant::SwiftPMPackageDescription" /* ruminantPackageDescription */,
+				"ruminant::ruminantTests" /* ruminantTests */,
+				"ruminant::ruminant" /* ruminant */,
+				"ruminant::ruminantPackageTests::ProductTarget" /* ruminantPackageTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		OBJ_24 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_25 /* Package.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_30 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_31 /* chunkediteratorTest.swift in Sources */,
+				OBJ_32 /* utilTest.swift in Sources */,
+				OBJ_33 /* vectorTest.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		OBJ_41 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 0;
+			files = (
+				OBJ_42 /* chunkediterator.swift in Sources */,
+				OBJ_43 /* tree.swift in Sources */,
+				OBJ_44 /* util.swift in Sources */,
+				OBJ_45 /* vector.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		OBJ_36 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = "ruminant::ruminant" /* ruminant */;
+			targetProxy = F8957D001FF8DFA50055D94C /* PBXContainerItemProxy */;
+		};
+		OBJ_51 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = "ruminant::ruminantTests" /* ruminantTests */;
+			targetProxy = F8957D011FF8DFA70055D94C /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		OBJ_22 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_SWIFT_FLAGS = "-swift-version 3 -I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		OBJ_23 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				LD = /usr/bin/true;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_SWIFT_FLAGS = "-swift-version 3 -I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
+				SWIFT_VERSION = 3.0;
+			};
+			name = Release;
+		};
+		OBJ_28 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = ruminant.xcodeproj/ruminantTests_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_VERSION = 3.0;
+				TARGET_NAME = ruminantTests;
+			};
+			name = Debug;
+		};
+		OBJ_29 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				EMBEDDED_CONTENT_CONTAINS_SWIFT = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = ruminant.xcodeproj/ruminantTests_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/Frameworks";
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				SWIFT_VERSION = 3.0;
+				TARGET_NAME = ruminantTests;
+			};
+			name = Release;
+		};
+		OBJ_3 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				ONLY_ACTIVE_ARCH = YES;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				USE_HEADERMAP = NO;
+			};
+			name = Debug;
+		};
+		OBJ_39 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = ruminant.xcodeproj/ruminant_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = ruminant;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGET_NAME = ruminant;
+			};
+			name = Debug;
+		};
+		OBJ_4 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_ARC = YES;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GCC_OPTIMIZATION_LEVEL = s;
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_SWIFT_FLAGS = "-DXcode";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				USE_HEADERMAP = NO;
+			};
+			name = Release;
+		};
+		OBJ_40 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ENABLE_TESTABILITY = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
+				);
+				HEADER_SEARCH_PATHS = "$(inherited)";
+				INFOPLIST_FILE = ruminant.xcodeproj/ruminant_Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(TOOLCHAIN_DIR)/usr/lib/swift/macosx";
+				MACOSX_DEPLOYMENT_TARGET = 10.12;
+				OTHER_LDFLAGS = "$(inherited)";
+				OTHER_SWIFT_FLAGS = "$(inherited)";
+				PRODUCT_BUNDLE_IDENTIFIER = ruminant;
+				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 3.0;
+				TARGET_NAME = ruminant;
+			};
+			name = Release;
+		};
+		OBJ_49 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Debug;
+		};
+		OBJ_50 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		OBJ_2 /* Build configuration list for PBXProject "ruminant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_3 /* Debug */,
+				OBJ_4 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_21 /* Build configuration list for PBXNativeTarget "ruminantPackageDescription" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_22 /* Debug */,
+				OBJ_23 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_27 /* Build configuration list for PBXNativeTarget "ruminantTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_28 /* Debug */,
+				OBJ_29 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_38 /* Build configuration list for PBXNativeTarget "ruminant" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_39 /* Debug */,
+				OBJ_40 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		OBJ_48 /* Build configuration list for PBXAggregateTarget "ruminantPackageTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				OBJ_49 /* Debug */,
+				OBJ_50 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = OBJ_1 /* Project object */;
+}
