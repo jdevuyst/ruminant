@@ -119,7 +119,9 @@
 				OBJ_12 /* Tests */,
 				OBJ_17 /* Products */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		OBJ_7 /* Sources */ = {
 			isa = PBXGroup;
