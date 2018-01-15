@@ -134,9 +134,11 @@ class VectorTest: XCTestCase {
         
         let seq : PersistentVector<Int> = [0,1,3]
         
-        let changedSeq = seq.assoc(index: 0, 42)
+        let changedSeq = seq
+            .assoc(index: 0, 42) // replace existing element
+            .assoc(index: 3, 9000) // append new element
         
-        XCTAssertEqual("[42, 1, 3]", changedSeq.description)
+        XCTAssertEqual("[42, 1, 3, 9000]", changedSeq.description)
         XCTAssertEqual("[0, 1, 3]", seq.description)
     }
     
@@ -161,9 +163,27 @@ class VectorTest: XCTestCase {
     
     func testCollection() {
         
-        let seq : PersistentVector<Int> = [0,1,3]
+        let seq : PersistentVector<Float> = [0,1,3]
         
+        XCTAssertEqual(0, seq[0], "subscript")
         XCTAssertEqual(1, seq[1], "subscript")
+        XCTAssertEqual(3, seq[2], "subscript")
+        
+        func f(_ x: Int) -> Float {
+            return sqrtf(Float(x))
+        }
+        
+        let size = Int(UInt16.max)
+        let empty: PersistentVector<Float> = []
+        var tvec = TransientVector(vector: empty)
+        for i in 0 ..< size {
+            tvec = tvec.conj(f(i))
+        }
+        let vec = tvec.persistent()
+        
+        for i in (0 ..< size).reversed() {
+            XCTAssertEqual(f(i), vec[i])
+        }
     }
     
     func testCompare() {
@@ -171,7 +191,10 @@ class VectorTest: XCTestCase {
         
         let seqB = PersistentVector<Int>().conj(0).conj(1).conj(2).conj(3).conj(5).conj(6)
         
-        XCTAssert(seqA == seqB, "Sequences not equal")
+        XCTAssert(seqA == seqB)
+        XCTAssert(seqA == seqA)
+        XCTAssert(seqA != seqA.conj(7))
+        XCTAssert(seqA != seqA.assoc(index: 1, 9000))
     }
     
     func testSubVector() {
