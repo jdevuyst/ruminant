@@ -309,7 +309,7 @@ public struct TransientVector<T: Equatable> {
         return (chunk: chunk, offset: index & 0x01f)
     }
     
-    public mutating func conj(element: T) -> TransientVector {
+    public mutating func conj(_ element: T) -> TransientVector {
         verifyTransient()
         
         if count - tailOffset() < 32 {
@@ -381,7 +381,7 @@ public struct TransientVector<T: Equatable> {
         verifyTransient()
         
         if index == count {
-            return self.conj(element: element)
+            return self.conj(element)
         }
         
         verifyBounds(index: index)
