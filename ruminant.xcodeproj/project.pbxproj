@@ -60,7 +60,7 @@
 		OBJ_8 /* chunkediterator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = chunkediterator.swift; sourceTree = "<group>"; };
 		OBJ_9 /* tree.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = tree.swift; sourceTree = "<group>"; };
 		"ruminant::ruminant::Product" /* ruminant.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = ruminant.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		"ruminant::ruminantTests::Product" /* ruminantTests.xctest */ = {isa = PBXFileReference; lastKnownFileType = file; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		"ruminant::ruminantTests::Product" /* ruminantTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; path = ruminantTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +191,14 @@
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 9999;
+				TargetAttributes = {
+					"ruminant::ruminant" = {
+						LastSwiftMigration = 0920;
+					};
+					"ruminant::ruminantTests" = {
+						LastSwiftMigration = 0920;
+					};
+				};
 			};
 			buildConfigurationList = OBJ_2 /* Build configuration list for PBXProject "ruminant" */;
 			compatibilityVersion = "Xcode 3.2";
@@ -263,8 +271,7 @@
 			buildSettings = {
 				LD = /usr/bin/true;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				OTHER_SWIFT_FLAGS = "-swift-version 3 -I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
-				SWIFT_VERSION = 3.0;
+				OTHER_SWIFT_FLAGS = "-I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
 			};
 			name = Debug;
 		};
@@ -273,8 +280,7 @@
 			buildSettings = {
 				LD = /usr/bin/true;
 				MACOSX_DEPLOYMENT_TARGET = 10.12;
-				OTHER_SWIFT_FLAGS = "-swift-version 3 -I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
-				SWIFT_VERSION = 3.0;
+				OTHER_SWIFT_FLAGS = "-I /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/swift/pm/3 -target x86_64-apple-macosx10.10 -sdk /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.13.sdk";
 			};
 			name = Release;
 		};
@@ -291,7 +297,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
-				SWIFT_VERSION = 3.0;
 				TARGET_NAME = ruminantTests;
 			};
 			name = Debug;
@@ -309,7 +314,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "@loader_path/../Frameworks @loader_path/Frameworks";
 				OTHER_LDFLAGS = "$(inherited)";
 				OTHER_SWIFT_FLAGS = "$(inherited)";
-				SWIFT_VERSION = 3.0;
 				TARGET_NAME = ruminantTests;
 			};
 			name = Release;
@@ -332,6 +336,7 @@
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 4.0;
 				USE_HEADERMAP = NO;
 			};
 			name = Debug;
@@ -354,7 +359,6 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
 				TARGET_NAME = ruminant;
 			};
 			name = Debug;
@@ -375,6 +379,7 @@
 				SUPPORTED_PLATFORMS = "macosx iphoneos iphonesimulator appletvos appletvsimulator watchos watchsimulator";
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = SWIFT_PACKAGE;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
+				SWIFT_VERSION = 4.0;
 				USE_HEADERMAP = NO;
 			};
 			name = Release;
@@ -397,7 +402,6 @@
 				PRODUCT_MODULE_NAME = "$(TARGET_NAME:c99extidentifier)";
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
-				SWIFT_VERSION = 3.0;
 				TARGET_NAME = ruminant;
 			};
 			name = Release;
