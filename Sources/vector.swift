@@ -27,6 +27,8 @@ public protocol PersistentVectorType: Hashable, Sequence {
     subscript(index: Int) -> Element { get }
     
     func assoc(index: Int, _ element: Element) -> Self
+
+    func concat<Other: Sequence>(_ rhs: Other) -> Self where Other.Element == Element
 }
 
 public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U) -> Bool
@@ -188,6 +190,12 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
     public func transient() -> TransientVector<T> {
         return TransientVector(vector: self)
     }
+
+    public func concat<Other: Sequence>(_ rhs: Other) -> PersistentVector where Other.Element == T {
+        var v = transient()
+        v = v.concat(rhs)
+        return v.persistent()
+    }
 }
 
 //
@@ -243,6 +251,10 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     }
     
     public var hashValue: Int { return count }
+
+    public func concat<Other: Sequence>(_ rhs: Other) -> Subvec where Other.Element == Element {
+        return rhs.reduce(self) { $0.conj($1) }
+    }
 }
 
 //
@@ -402,8 +414,10 @@ public struct TransientVector<T: Equatable> {
         let t = getChunk(index: index)
         return t.chunk[t.offset]
     }
-    
-    
+
+    public mutating func concat<Other: Sequence>(_ rhs: Other) -> TransientVector where Other.Element == T {
+        return rhs.reduce(into: self) { $0 = $0.conj($1) }
+    }
 }
 
 //

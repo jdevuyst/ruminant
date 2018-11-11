@@ -237,4 +237,11 @@ class VectorTest: XCTestCase {
                 arr = Array(subArray) },
             minimumSize: 1)
     }
+
+    func testConcat() {
+        let v1 : PersistentVector<Int> = [2, 3, 4, 5]
+        let v2 : PersistentVector<Int> = [20, 30, 40, 50]
+        XCTAssertEqual(v1.concat(v2), [2, 3, 4, 5, 20, 30, 40, 50])
+        XCTAssertEqual(PersistentVector(v1[1...2].concat(v2[1...2])), [3, 4, 30, 40])
+    }
 }
