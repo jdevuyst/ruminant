@@ -12,6 +12,7 @@ let package = Package(
     ],
     
     dependencies: [
+        .package(url: "https://github.com/typelift/SwiftCheck.git", from: "0.8.1")
     ],
     
     targets: [
@@ -22,7 +23,7 @@ let package = Package(
         
         .testTarget(
             name: "ruminantTests",
-            dependencies: ["ruminant"],
+            dependencies: ["ruminant", "SwiftCheck"],
             path: "./Tests",
             sources: ["ruminantTests"]),
         ]
