@@ -34,20 +34,18 @@ public protocol PersistentVectorType: Hashable, Sequence {
 public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U) -> Bool
     where T.Iterator.Element == U.Iterator.Element, T.Iterator.Element: Equatable
 {
-    guard lhs.count == rhs.count else {
+    guard lhs.count == rhs.count && lhs.hashValue == rhs.hashValue else {
         return false
     }
-    
-    return !zip(rhs, lhs)
-        .map { $0.0 == $0.1 }
-        .contains(where: { !$0 })
+
+    return zip(lhs, rhs).allSatisfy({(x, y) in x == y})
 }
 
 //
 //  MARK: - PersistentVector
 //
 
-public struct PersistentVector<T: Equatable> : PersistentVectorType, ExpressibleByArrayLiteral {
+public struct PersistentVector<T: Hashable> : PersistentVectorType, ExpressibleByArrayLiteral {
     
     public typealias Iterator = ChunkedIterator<T>
     public typealias Index = Int
@@ -185,8 +183,6 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
         return ChunkedIterator(f: {self.getChunk(index: $0)}, start: 0, end: count)
     }
     
-    public var hashValue: Int { return count }
-    
     public func transient() -> TransientVector<T> {
         return TransientVector(vector: self)
     }
@@ -196,13 +192,19 @@ public struct PersistentVector<T: Equatable> : PersistentVectorType, Expressible
         v = v.concat(rhs)
         return v.persistent()
     }
+
+    public func hash(into hasher: inout Hasher) {
+        for x in self {
+            hasher.combine(x)
+        }
+    }
 }
 
 //
 //  MARK: - Subvec
 //
 
-public struct Subvec<T: Equatable>: PersistentVectorType {
+public struct Subvec<T: Hashable>: PersistentVectorType {
     public typealias Index = Int
     public typealias Iterator = ChunkedIterator<T>
     public typealias SubSequence = Subvec<T>
@@ -249,11 +251,15 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
     public func makeIterator() -> Iterator {
         return ChunkedIterator<T>(f: {self.v.getChunk(index: $0)}, start: start, end: end)
     }
-    
-    public var hashValue: Int { return count }
 
     public func concat<Other: Sequence>(_ rhs: Other) -> Subvec where Other.Element == Element {
         return rhs.reduce(self) { $0.conj($1) }
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        for x in self {
+            hasher.combine(x)
+        }
     }
 }
 
@@ -263,7 +269,7 @@ public struct Subvec<T: Equatable>: PersistentVectorType {
 
 private var transientVectorCounter = 0
 
-public struct TransientVector<T: Equatable> {
+public struct TransientVector<T: Hashable> {
     
     public typealias Index = Int
     

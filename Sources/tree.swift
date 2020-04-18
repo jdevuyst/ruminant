@@ -21,7 +21,7 @@ private func unreachable() -> Never {
 //  MARK: - Node Types
 //
 
-class Node<T> {
+class Node<T: Hashable> {
     var editID: Int
     
     init(transientID: Int) {
@@ -56,7 +56,7 @@ class Node<T> {
     func onlyChildNode() -> Node? { unreachable() }
 }
 
-internal class TreeNode<T> : Node<T> {
+internal class TreeNode<T: Hashable> : Node<T> {
     private var children: [Node<T>]
     
     init(transientID: Int, children: [Node<T>]) {
@@ -184,7 +184,7 @@ internal class TreeNode<T> : Node<T> {
     }
 }
 
-internal class LeafNode<T> : Node<T> {
+internal class LeafNode<T: Hashable> : Node<T> {
     private var children: [T]
     
     init(transientID: Int, children: [T]) {
