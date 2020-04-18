@@ -6,6 +6,17 @@
 //  Copyright (c) 2015 Jonas De Vuyst. All rights reserved.
 //
 
+// This function is used a lot and that is not a good thing.
+//
+// At the time when this project was started, @indirect enums were not yet
+// available in Swift. This was quite unfortunate, because sum types are
+// the usual way to implement trees. Using @indirect enums, a lot of illegal
+// states that are presently guarded by an `unreachable()` call, could be
+// made unrepresentable.
+private func unreachable() -> Never {
+    preconditionFailure("This code should be unreachable")
+}
+
 //
 //  MARK: - Node Types
 //
@@ -17,11 +28,11 @@ class Node<T> {
         self.editID = transientID
     }
     
-    func transientVersion(_ transientID: Int) -> Node<T> { assert(false) }
+    func transientVersion(_ transientID: Int) -> Node<T> { unreachable() }
     
-    func getChunk(_ index: Int, shift: Int) -> [T] { assert(false) }
+    func getChunk(_ index: Int, shift: Int) -> [T] { unreachable() }
     
-    func transientChunk(_ transientID: Int, index: Int, shift: Int, chunk: inout [T]) { assert(false) }
+    func transientChunk(_ transientID: Int, index: Int, shift: Int, chunk: inout [T]) { unreachable() }
     
     func newPath(_ transientID: Int, shift: Int) -> Node {
         return shift == 0
@@ -30,19 +41,19 @@ class Node<T> {
                 .newPath(transientID, shift: shift - 5)
     }
     
-    func pushTail(_ count: Int, shift: Int, tailNode: Node<T>) -> Node<T> { assert(false) }
+    func pushTail(_ count: Int, shift: Int, tailNode: Node<T>) -> Node<T> { unreachable() }
     
-    func transientPushTail(_ transientID: Int, count: Int, shift: Int, tailNode: Node<T>) -> Node<T> { assert(false) }
+    func transientPushTail(_ transientID: Int, count: Int, shift: Int, tailNode: Node<T>) -> Node<T> { unreachable() }
     
-    func popTail(_ count: Int, shift: Int) -> Node<T>? { assert(false) }
+    func popTail(_ count: Int, shift: Int) -> Node<T>? { unreachable() }
     
-    func transientPopTail(_ transientID: Int, count: Int, shift: Int) -> Node<T>? { assert(false) }
+    func transientPopTail(_ transientID: Int, count: Int, shift: Int) -> Node<T>? { unreachable() }
     
-    func assoc(_ index: Int, shift: Int, element: T) -> Node { assert(false) }
+    func assoc(_ index: Int, shift: Int, element: T) -> Node { unreachable() }
     
-    func transientAssoc(_ transientID: Int, index: Int, shift: Int, element: T) -> Node { assert(false) }
+    func transientAssoc(_ transientID: Int, index: Int, shift: Int, element: T) -> Node { unreachable() }
     
-    func onlyChildNode() -> Node? { assert(false) }
+    func onlyChildNode() -> Node? { unreachable() }
 }
 
 internal class TreeNode<T> : Node<T> {

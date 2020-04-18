@@ -40,7 +40,7 @@ private struct Randomized {
         var lbound = minimumSize
         var ubound = minimumSize
         while ubound <= maximumSize {
-            let size = Int(arc4random_uniform(ubound.unsafeSubtracting(lbound)) + lbound)
+            let size = Int(arc4random_uniform(ubound - lbound) + lbound)
             assert(size >= minimumSize)
             initWithSize(size)
             
