@@ -16,6 +16,23 @@
 //  https://github.com/clojure/clojurescript/blob/22dd4fbeed72398cbc3336fccffe8196c56cd209/src/cljs/cljs/core.cljs#L4070
 //
 
+fileprivate final class LazyValue<T> {
+    private var cachedValue: T?
+
+    func cached(_ newValue: () -> T) -> T {
+        if let x = cachedValue {
+            return x
+        } else {
+            let x = newValue()
+            cachedValue = x
+            return x
+        }
+    }
+}
+
+fileprivate protocol CachableSeqHashValue : Sequence where Element: Hashable {
+    var cachedHashValue: LazyValue<Int> { get }
+}
 
 public protocol PersistentVectorType: Hashable, Sequence {
     var count: Int { get }
@@ -45,7 +62,7 @@ public func ==<T: PersistentVectorType, U: PersistentVectorType>(lhs: T, rhs: U)
 //  MARK: - PersistentVector
 //
 
-public struct PersistentVector<T: Hashable> : PersistentVectorType, ExpressibleByArrayLiteral {
+public struct PersistentVector<T: Hashable> : PersistentVectorType, ExpressibleByArrayLiteral, CachableSeqHashValue {
     
     public typealias Iterator = ChunkedIterator<T>
     public typealias Index = Int
@@ -55,6 +72,8 @@ public struct PersistentVector<T: Hashable> : PersistentVectorType, ExpressibleB
     let shift: Int
     let root: Node<T>
     let tail: [T]
+
+    fileprivate let cachedHashValue = LazyValue<Int>()
     
     internal init(count: Int, shift: Int, root: Node<T>, tail: [T]) {
         assert(count >= 0)
@@ -192,19 +211,13 @@ public struct PersistentVector<T: Hashable> : PersistentVectorType, ExpressibleB
         v = v.concat(rhs)
         return v.persistent()
     }
-
-    public func hash(into hasher: inout Hasher) {
-        for x in self {
-            hasher.combine(x)
-        }
-    }
 }
 
 //
 //  MARK: - Subvec
 //
 
-public struct Subvec<T: Hashable>: PersistentVectorType {
+public struct Subvec<T: Hashable>: PersistentVectorType, CachableSeqHashValue {
     public typealias Index = Int
     public typealias Iterator = ChunkedIterator<T>
     public typealias SubSequence = Subvec<T>
@@ -212,6 +225,8 @@ public struct Subvec<T: Hashable>: PersistentVectorType {
     private let v: PersistentVector<T>
     private let start: Index
     private let end: Index
+
+    fileprivate let cachedHashValue = LazyValue<Int>()
     
     init(vector: PersistentVector<T>, start: Index, end: Index) {
         assert(end >= start)
@@ -254,12 +269,6 @@ public struct Subvec<T: Hashable>: PersistentVectorType {
 
     public func concat<Other: Sequence>(_ rhs: Other) -> Subvec where Other.Element == Element {
         return rhs.reduce(self) { $0.conj($1) }
-    }
-
-    public func hash(into hasher: inout Hasher) {
-        for x in self {
-            hasher.combine(x)
-        }
     }
 }
 
@@ -429,6 +438,22 @@ public struct TransientVector<T: Hashable> {
 //
 //  MARK: - Extensions
 //
+
+extension CachableSeqHashValue {
+    public func hash(into hasher: inout Hasher) {
+        for x in self {
+            hasher.combine(x)
+        }
+    }
+
+    public var hashValue: Int {
+        return cachedHashValue.cached {
+            var hasher = Hasher()
+            hash(into: &hasher)
+            return hasher.finalize()
+        }
+    }
+}
 
 extension PersistentVector : CustomStringConvertible, CustomDebugStringConvertible
 {
