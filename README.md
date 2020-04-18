@@ -20,7 +20,7 @@ You should integrate it into your project with the Swift-Package Manager
 
 ```swift
 dependencies: [
-.package(url: "http://github.com/jdevuyst/ruminant", from: "1.0.5")
+.package(url: "https://github.com/jdevuyst/ruminant", from: "1.0.6")
 ],
 ```
 
@@ -54,7 +54,7 @@ let package = Package(
     name: "sample",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "http://github.com/jdevuyst/ruminant", from: "1.0.5")
+        .package(url: "https://github.com/jdevuyst/ruminant", from: "1.0.6")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
