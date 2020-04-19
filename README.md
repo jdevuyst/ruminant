@@ -1,22 +1,38 @@
 # Ruminant
 
-A Swift implementation of [Clojure](http://clojure.org)'s [persistent data structures](http://en.wikipedia.org/wiki/Persistent_data_structure). Currently persistent and transient vectors are implemented. Persistent hash maps are next on my list.
+A Swift implementation of [Clojure](http://clojure.org)'s [persistent](http://en.wikipedia.org/wiki/Persistent_data_structure) vectors.
 
 ## Persistent Vectors
 
-All core operations on vectors have been implemented:
+Core operations such as `conj`, `assoc`, `get` (using subscripts), `subvec` (using subscripts), and `concat` have been implemented.
 
 ```swift
 let v: PersistentVector = ["a", "b", "c"]
-let v2 = v.conj("d").assoc(2, "C")
-assert(v == ["a", "b", "c"])
-assert(v2 == ["a", "b", "C", "d"])
-assert(v.pop() == v2[0..<2])
-assert(map(v, {$0.uppercaseString}) == ["A", "B", "C"])
+let v2 = v.conj("d").assoc(index: 2, "C")
+XCTAssertEqual(v, ["a", "b", "c"])
+XCTAssertEqual(v2, ["a", "b", "C", "d"])
+XCTAssert(v.pop() == v2[0..<2])
+XCTAssertEqual(v.map {$0.uppercased()}, ["A", "B", "C"])
+XCTAssertEqual(v[1], "b")
+XCTAssertEqual(Array(v[1...2]), ["b", "c"])
 ```
+
+Transient vectors are included:
+
+```swift
+let v: PersistentVector = ["a", "b", "c"]
+var tmp = v.transient()
+tmp = tmp.pop()
+tmp = tmp.conj("3")
+tmp = tmp.conj("4")
+XCTAssert(tmp.persistent() == ["a", "b", "3", "4"])
+```
+
 ## Integration
 
-You should integrate it into your project with the Swift-Package Manager
+You can use the Swift-Package manager to integrate Ruminant.
+
+Add the following dependency in `Package.swift`:
 
 ```swift
 dependencies: [
@@ -26,23 +42,22 @@ dependencies: [
 
 ## Sample Usage
 
-Here is a sample walkthrough with Swift Package Manager 4.0 to use this library
+Here is a sample walkthrough with Swift Package Manager to use this library.
 
-At first create a complete new directory from CLI named 'Sample' and change into it.
+First, create a complete new directory from CLI named "Sample" and `cd` into it.
 
 ```bash
 mkdir sample
 cd sample
 ````
 
-After this create a new exectuable swift template inside this directory
+Next, create a new exectuable swift template inside this directory.
 
 ```bash
 swift package init --type executable
 ```
-Now you have the skeleton working directory. I use the swiftenv tool to manage my current installed swift versions. At the moment of writing this I have installed Swift 3.1.1 and 4.0.3. For this libary I used the newest version of Swift at the moment which is 4.0.3!
 
-After this change the Swift-Packager Manifest a little bit (Package.swift)
+Now it's time to update `Package.swift`.
 
 ```swift
 // swift-tools-version:4.0
@@ -66,13 +81,13 @@ let package = Package(
 )
 ```
 
-Now we can restore the dependencies with a small command
+Let's install the new dependency.
 
 ```bash
 swift package update
 ```
 
-So now we can check if we can use the PersistentVector type in our sample program by extending the Main.swift source
+We'll also updatee `Main.swift` to test that Ruminant can be loaded.
 
 ```swift
 import ruminant
@@ -83,7 +98,7 @@ let sample = PersistentVector([1,2,3,4]).conj(45).conj(42)
 print(sample)
 ```
 
-After build and run the program from the commandline we should see the following output
+Finally, we can build and run the program from the command line.
 
 ```bash
 swift build
@@ -93,7 +108,7 @@ Hello, Persistent Vector!
 [1, 2, 3, 4, 45, 42]
 ```
 
-So that's all. Enjoy the world of persistent datastructures.
+That's it. Enjoy the world of persistent datastructures!
 
 ## License
 

@@ -34,7 +34,7 @@ private struct Randomized {
                                  multiply: UInt32 = 2,
                                  maximumSize: UInt32 = UInt32(UInt16.max) * 4,
                                  caller: String = #function) {
-        var trivial = true
+        var testSizes: [Int] = []
         let empty: PersistentVector<Element> = []
         
         var lbound = minimumSize
@@ -43,9 +43,6 @@ private struct Randomized {
             let size = Int(arc4random_uniform(ubound - lbound) + lbound)
             assert(size >= minimumSize)
             initWithSize(size)
-            
-            print("Running an equivalence test on behalf of", caller,
-                  "with a vector and array of size", size)
             
             var arr: [Element] = []
             arr.reserveCapacity(size)
@@ -74,14 +71,17 @@ private struct Randomized {
             }
             XCTAssertEqual(i, vec.count)
             
-            trivial = false // tested something meaningful
+            testSizes.append(size) // tested something meaningful
             
             lbound = ubound
             ubound = (lbound + increment) * multiply
             assert(ubound > lbound)
         }
-        
-        assert(!trivial)
+
+        print("Ran", testSizes.count, "equivalence tests on behalf of", caller,
+              "with vectors and arrays of size", testSizes)
+
+        XCTAssertGreaterThan(testSizes.reduce(0, +), 0)
     }
 }
 
