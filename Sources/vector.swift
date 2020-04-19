@@ -34,7 +34,7 @@ fileprivate protocol CachableSeqHashValue : Sequence where Element: Hashable {
     var cachedHashValue: LazyValue<Int> { get }
 }
 
-public protocol PersistentVectorType: Hashable, Sequence {
+public protocol PersistentVectorType: Hashable, Collection {
     var count: Int { get }
     
     func conj(_ element: Element) -> Self
@@ -279,7 +279,7 @@ public struct Subvec<T: Hashable>: PersistentVectorType, CachableSeqHashValue {
 private var transientVectorCounter = 0
 
 public struct TransientVector<T: Hashable> {
-    
+    public typealias Element = T
     public typealias Index = Int
     
     public var count: Int

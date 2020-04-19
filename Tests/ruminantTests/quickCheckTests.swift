@@ -6,105 +6,159 @@
 //
 
 import XCTest
-import SwiftCheck
+@testable import SwiftCheck
 @testable import ruminant
 
-class QuickCheckTest: XCTestCase {
+extension PersistentVector: Arbitrary where Element: Arbitrary {
+    public static var arbitrary: Gen<Self> {
+        return Array.arbitrary.map(Self.init)
+    }
+}
 
-//    func testConjRandomized() {
-//        let el1 = Randomized.element()
-//        let el2 = Randomized.element()
-//
-//        Randomized.assertEquivalent(
-//            transientUpdate: { $0.conj(el1) },
-//            update: { $0.conj(el2) },
-//            equivalentArrayUpdate: { $0 += [el1, el2] })
-//    }
-//
-//    func testPopRandomized() {
-//        Randomized.assertEquivalent(
-//            transientUpdate: { $0.pop()  },
-//            update: { $0.pop() },
-//            equivalentArrayUpdate: { arr in
-//                arr.removeLast()
-//                arr.removeLast() },
-//            minimumSize: 2)
-//    }
-//
-//    func testAssocRandomized() {
-//        let el1 = Randomized.element()
-//        let el2 = Randomized.element()
-//
-//        var idx1: Int!
-//        var idx2: Int!
-//
-//        Randomized.assertEquivalent(
-//            initWithSize: { size in
-//                idx1 = Randomized.index(forSize: size)
-//                idx2 = Randomized.index(forSize: size) },
-//            transientUpdate: { $0.assoc(index: idx1, el1) },
-//            update: { $0.assoc(index: idx2, el2) },
-//            equivalentArrayUpdate: { arr in
-//                arr[idx1] = el1
-//                arr[idx2] = el2 },
-//            minimumSize: 2)
-//    }
-//
-//    func testCollection() {
-//
-//        let seq : PersistentVector<Float> = [0,1,3]
-//
-//        XCTAssertEqual(0, seq[0], "subscript")
-//        XCTAssertEqual(1, seq[1], "subscript")
-//        XCTAssertEqual(3, seq[2], "subscript")
-//
-//        func f(_ x: Int) -> Float {
-//            return sqrtf(Float(x))
+extension Subvec: Arbitrary where Element: Arbitrary {
+    public static var arbitrary: Gen<Self> {
+        return Gen
+            .zip(PersistentVector.arbitrary, Int.arbitrary, Int.arbitrary)
+            .suchThat { (v, l, u) in l >= 0 && l <= u && u < v.count }
+            .map(Self.init)
+    }
+}
+
+extension TransientVector: Arbitrary where Element: Arbitrary {
+    public static var arbitrary: Gen<Self> {
+        return PersistentVector.arbitrary.map(Self.init)
+    }
+}
+
+extension Collection where Index: Arbitrary, Index: Hashable {
+    var arbitraryPartition: Gen<[SubSequence]> {
+        if isEmpty {
+            let subseq = self[startIndex..<endIndex]
+            return Gen.pure([subseq])
+        }
+
+        return Gen<Index>.fromInitialSegments(of: indices.shuffled())
+            .map { [startIndex, endIndex] cuts in
+                Array(Set([startIndex, endIndex] + cuts)).sorted()
+            }.map { cuts in
+                return zip(cuts.dropLast(), cuts.dropFirst()).map { (l, u) in
+                    return self[l..<u]
+                }
+        }
+    }
+}
+
+class PersistentVectorTypeTests<T> where T: PersistentVectorType, T: Arbitrary, T.Element: Arbitrary, T.Element: Hashable, T.SubSequence: PersistentVectorType, T.Index == Int {
+    let name: String
+
+    init(name: String) {
+        self.name = name
+    }
+
+    func testEquality() {
+        property(name + " == is an equivalence relation") <- (
+            (forAll { (xs: T) in xs == xs }) <?> "Reflexivity"
+            ^&&^
+            (forAll { (xs: T, ys: T) in (xs == ys) == (ys == xs) }) <?> "Symmetry"
+            ^&&^
+            (forAll { (xs: T, ys: T, zs: T) in !(xs == ys && ys == zs) || (xs == zs) }) <?> "Transitivity"
+         )
+
+        property(name + " == uses value equality") <- forAll { (xs: T, ys: T) in
+            return (Array(xs) == Array(ys)) == (xs == ys)
+        }
+    }
+
+    func testGet() {
+        property(name + " has consistent indices") <- forAll { (xs: T) in
+            return Array(xs) == (0 ..< xs.count).map {xs[$0]}
+        }
+    }
+
+    func testAssoc() {
+        property(name + " assoc() sets elements")
+            <- forAll(T.arbitrary.suchThat({$0.count > 0})) { xs in
+                return forAll(Gen<Int>.fromElements(in: 0 ... xs.count - 1)) { i in
+                    return forAll { (y: T.Element) in
+                        let prev = xs[i]
+                        let new = xs.assoc(index: i, y)
+                        return
+                            (new[i] == y) <?> "Set value"
+                            ^&&^
+                            (new.assoc(index: i, prev) == xs) <?> "Unset value"
+                    }
+                }
+        }
+    }
+
+    func testConjPop() {
+        property(name + " conj() appends") <- forAll { (xs: T, y: T.Element) in
+            return xs.conj(y)[xs.count] == y
+        }
+
+        property(name + " pop() after conj() is a no-op") <- forAll { (xs: T, y: T.Element) in
+            return xs == xs.conj(y).pop()
+        }
+    }
+
+    func testConjAssoc() {
+        // FIXME: This test is failing for subvec
+//        property(name + " assoc() can append elements") <- forAll { (xs: T, y: T.Element) in
+//            return xs.conj(y) == xs.assoc(index: xs.count, y)
 //        }
-//
-//        let size = Int(UInt16.max)
-//        let empty: PersistentVector<Float> = []
-//        var tvec = TransientVector(vector: empty)
-//        for i in 0 ..< size {
-//            tvec = tvec.conj(f(i))
-//        }
-//        let vec = tvec.persistent()
-//
-//        for i in (0 ..< size).reversed() {
-//            XCTAssertEqual(f(i), vec[i])
-//        }
-//    }
-//
-//    func testCompare() {
-//        let seqA : PersistentVector<Int> = [0,1,2,3,5,6]
-//
-//        let seqB = PersistentVector<Int>().conj(0).conj(1).conj(2).conj(3).conj(5).conj(6)
-//
-//        XCTAssert(seqA == seqB)
-//        XCTAssert(seqA == seqA)
-//        XCTAssert(seqA != seqA.conj(7))
-//        XCTAssert(seqA != seqA.assoc(index: 1, 9000))
-//    }
-//
-//    func testSubVectorRandomized() {
-//        var range: CountableClosedRange<Int>!
-//
-//        Randomized.assertEquivalent(
-//            initWithSize: { size in
-//                let idx1 = Randomized.index(forSize: size)
-//                let idx2 = Randomized.index(forSize: size)
-//                range = min(idx1, idx2) ... max(idx1, idx2) },
-//            update: { PersistentVector($0[range]) },
-//            equivalentArrayUpdate: { arr in
-//                let subArray = arr[range]
-//                arr = Array(subArray) },
-//            minimumSize: 1)
-//    }
-//
-//    func testConcat() {
-//        let v1 : PersistentVector<Int> = [2, 3, 4, 5]
-//        let v2 : PersistentVector<Int> = [20, 30, 40, 50]
-//        XCTAssertEqual(v1.concat(v2), [2, 3, 4, 5, 20, 30, 40, 50])
-//        XCTAssertEqual(PersistentVector(v1[1...2].concat(v2[1...2])), [3, 4, 30, 40])
-//    }
+    }
+
+    func testConcat() {
+        property(name + " concat() concatenates vectors") <- forAll { (xs: T, ys: T) in
+            return Array(xs) + Array(ys) == Array(xs.concat(ys))
+        }
+    }
+
+    func testSubvec() {
+        property("Taking Subvec of full PersistentVector preserves equality") <- forAll { (xs: T) in
+            return xs == xs[0..<xs.count]
+        }
+
+        property("Converting a Subvec to a PersistentVector preserves equality") <- forAll { (xs: T) in
+            return xs == PersistentVector(xs)
+        }
+
+        property("Concat of a Subvec partition is equal to the original vector") <- forAll { (xs: T) in
+            func f(_ lhs: PersistentVector<T.Element>, _ rhs: T.SubSequence) -> PersistentVector<T.Element> {
+                lhs.concat(rhs)
+            }
+            return xs.arbitraryPartition.map { xs == $0.reduce([], f) }
+        }
+    }
+
+    func testAll() {
+        testEquality()
+        testGet()
+        testAssoc()
+        testConjPop()
+        testConjAssoc()
+        testConcat()
+        testSubvec()
+    }
+}
+
+class QuickCheckTest: XCTestCase {
+    func testPersistentVectorType() {
+        PersistentVectorTypeTests<PersistentVector<Int>>(name: "PersistentVector").testAll()
+        PersistentVectorTypeTests<Subvec<Int>>(name: "Subvec").testAll()
+    }
+
+    func testToAndFromArray() {
+        property("To-array after from-array is a no-op") <- forAll { (xs: [Int]) in
+            return xs == Array(PersistentVector(xs))
+        }
+    }
+
+    func testToAndFromTransient() {
+        property("persistent() after transient() is a no-op") <- forAll { (xs: [Int]) in
+            let v = PersistentVector(xs)
+            var v2 = v.transient()
+            return v == v2.persistent()
+        }
+    }
 }
