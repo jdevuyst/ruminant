@@ -48,6 +48,113 @@ extension Collection where Index: Arbitrary, Index: Hashable {
     }
 }
 
+enum Op<T> {
+    typealias Element = T
+
+    case conj(T)
+    case pop
+    case assoc(Int, T)
+    case concat([T])
+}
+
+extension Op: Arbitrary where Element: Arbitrary {
+    typealias GenType = Gen<Op<Element>>
+
+    static var arbitrary: GenType {
+        Int.arbitrary.suchThat({$0 >= 0}).flatMap(Self.arbitrary(forSize:))
+    }
+
+    static func arbitrary(forSize size: Int) -> GenType {
+        let conjOp: GenType =
+            T.arbitrary.map { .conj($0) }
+        let popOp: GenType? =
+            size > 0 ? Gen.pure(.pop) : nil
+        let assocOp: GenType =
+            Gen.zip(Gen.choose((0, size)), Element.arbitrary).map{ .assoc($0, $1) }
+        let concatOp: GenType =
+            [T].arbitrary.map { .concat($0) }
+        let ops = [(1, conjOp), (3, popOp), (5, assocOp), (1, concatOp)]
+        return Gen.frequency(ops.compactMap {
+            switch $0 {
+            case let (n, .some(op)): return .some((n, op))
+            case (_, .none): return .none
+            }
+        })
+    }
+
+    static func arbitraryList(forSize origSize: Int) -> Gen<[Op<Element>]> {
+        Gen.sized { n in
+            func next(size: Int, ops: [Op<Element>]) -> Gen<(Int, [Op<Element>])> {
+                return Self.arbitrary(forSize: size).map { op in
+                    let newSize: Int
+                    switch op {
+                    case .pop: newSize = size - 1
+                    default: newSize = size
+                    }
+                    return (newSize, ops + [op])
+                }
+            }
+
+            var gen: Gen<(Int, [Op<Element>])> = Gen.pure((origSize, []))
+            for _ in 0 ..< n {
+                gen = gen.flatMap { (size, ops) in
+                    return next(size: size, ops: ops)
+                }
+            }
+
+            return gen.map {$0.1}
+        }
+    }
+}
+
+protocol CanApplyOp {
+    associatedtype Element
+
+    mutating func apply(op: Op<Element>) -> Self
+}
+
+extension CanApplyOp {
+    mutating func applyAll(ops: [Op<Element>]) -> Self {
+        for op in ops {
+            self = self.apply(op: op)
+        }
+        return self
+    }
+}
+
+extension PersistentVector: CanApplyOp {
+    func apply(op: Op<T>) -> PersistentVector<T> {
+        switch op {
+        case let .conj(x): return conj(x)
+        case .pop: return pop()
+        case let .assoc(idx, x): return assoc(index: idx, x)
+        case let .concat(xs): return concat(xs)
+        }
+    }
+}
+
+extension Subvec: CanApplyOp {
+    func apply(op: Op<T>) -> Subvec<T> {
+        switch op {
+        case let .conj(x): return conj(x)
+        case .pop: return pop()
+        case let .assoc(idx, x): return assoc(index: idx, x)
+        case let .concat(xs): return concat(xs)
+        }
+    }
+}
+
+extension TransientVector: CanApplyOp {
+    mutating func apply(op: Op<T>) -> TransientVector<T> {
+        switch op {
+        case let .conj(x): return conj(x)
+        case .pop: return pop()
+        case let .assoc(idx, x): return assoc(index: idx, x)
+        case let .concat(xs): return concat(xs)
+        }
+    }
+}
+
 class PersistentVectorTypeTests<T> where T: PersistentVectorType, T: Arbitrary, T.Element: Arbitrary, T.Element: Hashable, T.SubSequence: PersistentVectorType, T.Index == Int {
     let name: String
 
@@ -142,22 +249,33 @@ class PersistentVectorTypeTests<T> where T: PersistentVectorType, T: Arbitrary, 
 }
 
 class QuickCheckTest: XCTestCase {
+    typealias ElementType = Int
+
     func testPersistentVectorType() {
-        PersistentVectorTypeTests<PersistentVector<Int>>(name: "PersistentVector").testAll()
-        PersistentVectorTypeTests<Subvec<Int>>(name: "Subvec").testAll()
+        PersistentVectorTypeTests<PersistentVector<ElementType>>(name: "PersistentVector").testAll()
+        PersistentVectorTypeTests<Subvec<ElementType>>(name: "Subvec").testAll()
     }
 
     func testToAndFromArray() {
-        property("To-array after from-array is a no-op") <- forAll { (xs: [Int]) in
+        property("To-array after from-array is a no-op") <- forAll { (xs: [ElementType]) in
             return xs == Array(PersistentVector(xs))
         }
     }
 
-    func testToAndFromTransient() {
-        property("persistent() after transient() is a no-op") <- forAll { (xs: [Int]) in
-            let v = PersistentVector(xs)
-            var v2 = v.transient()
-            return v == v2.persistent()
+    func testManyOps() {
+        property("All vector types behave alike") <- forAll { (subvec: Subvec<ElementType>) in
+            return forAll(Op<ElementType>.arbitraryList(forSize: subvec.count)) { ops in
+                var persistent = PersistentVector(subvec)
+                var subvec = subvec
+                var transient = persistent.transient()
+                persistent = persistent.applyAll(ops: ops)
+                subvec = subvec.applyAll(ops: ops)
+                transient = transient.applyAll(ops: ops)
+                return
+                    (persistent == transient.persistent()) <?> "Transient"
+                    ^&&^
+                    (persistent == subvec) <?> "Subvec"
+            }
         }
     }
 }
