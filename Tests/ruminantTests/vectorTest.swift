@@ -244,4 +244,22 @@ class VectorTest: XCTestCase {
         XCTAssertEqual(v1.concat(v2), [2, 3, 4, 5, 20, 30, 40, 50])
         XCTAssertEqual(PersistentVector(v1[1...2].concat(v2[1...2])), [3, 4, 30, 40])
     }
+
+    func testNoHashSharing() {
+        let ops: [(inout TransientVector<Int>) -> TransientVector<Int>] =
+            [{$0.pop()}, {$0.conj(9)}, {$0.assoc(index: 0, 9)}, {$0.concat([9])}]
+        for f in ops {
+            let xs: PersistentVector<Int> = [1, 2, 3]
+            let h1 = xs.hashValue // force hash value to be computed
+            var transient = xs.transient()
+            let h2 = xs.hashValue
+            transient = f(&transient)
+            let ys = transient.persistent()
+            let g = ys.hashValue
+            let h3 = xs.hashValue
+            XCTAssertEqual(h1, h2)
+            XCTAssertEqual(h2, h3)
+            XCTAssertNotEqual(h1, g)
+        }
+    }
 }

@@ -174,6 +174,10 @@ class PersistentVectorTypeTests<T> where T: PersistentVectorType, T: Arbitrary, 
         property(name + " == uses value equality") <- forAll { (xs: T, ys: T) in
             return (Array(xs) == Array(ys)) == (xs == ys)
         }
+
+        property(name + " == implies identical hash value") <- forAll { (xs: T, ys: T) in
+            return xs != ys || xs.hashValue == ys.hashValue
+        }
     }
 
     func testGet() {
@@ -217,6 +221,14 @@ class PersistentVectorTypeTests<T> where T: PersistentVectorType, T: Arbitrary, 
     func testConcat() {
         property(name + " concat() concatenates vectors") <- forAll { (xs: T, ys: T) in
             return Array(xs) + Array(ys) == Array(xs.concat(ys))
+        }
+
+        property(name + " concat([]) is a no-op") <- forAll { (xs: T) in
+            return xs.concat([]) == xs
+        }
+
+        property(name + " xs.concat([y]) == xs.conj(y)") <- forAll { (xs: T, y: T.Element) in
+            return xs.concat([y]) == xs.conj(y)
         }
     }
 
@@ -274,7 +286,7 @@ class QuickCheckTest: XCTestCase {
                 return
                     (persistent == transient.persistent()) <?> "Transient"
                     ^&&^
-                    (persistent == subvec) <?> "Subvec"
+                    (persistent == subvec && persistent.hashValue == subvec.hashValue) <?> "Subvec"
             }
         }
     }
