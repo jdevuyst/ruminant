@@ -36,7 +36,7 @@ Add the following dependency in `Package.swift`:
 
 ```swift
 dependencies: [
-.package(url: "https://github.com/jdevuyst/ruminant", from: "1.0.6")
+.package(url: "https://github.com/jdevuyst/ruminant", from: "1.0.7")
 ],
 ```
 
@@ -69,7 +69,7 @@ let package = Package(
     name: "sample",
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/jdevuyst/ruminant", from: "1.0.6")
+        .package(url: "https://github.com/jdevuyst/ruminant", from: "1.0.7")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
