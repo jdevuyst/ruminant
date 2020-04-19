@@ -229,14 +229,16 @@ public struct Subvec<T: Hashable>: PersistentVectorType, CachableSeqHashValue {
     fileprivate let cachedHashValue = LazyValue<Int>()
     
     init(vector: PersistentVector<T>, start: Index, end: Index) {
-        assert(end >= start)
+        precondition(end >= start)
+        precondition(end - start <= vector.count)
         self.v = vector
         self.start = start
         self.end = end
     }
     
     init(vector: Subvec, start: Index, end: Index) {
-        assert(end >= start)
+        precondition(end >= start)
+        precondition(end - start <= vector.count)
         self.v = vector.v
         self.start = vector.start + start
         self.end = vector.start + end
@@ -254,7 +256,11 @@ public struct Subvec<T: Hashable>: PersistentVectorType, CachableSeqHashValue {
     }
     
     public func assoc(index: Index, _ element: T) -> SubSequence {
-        return Subvec(vector: v.assoc(index: index + start, element), start: start, end: end)
+        if index == count {
+            return conj(element)
+        } else {
+            return Subvec(vector: v.assoc(index: index + start, element), start: start, end: end)
+        }
     }
     
     public subscript(index: Index) -> T { return v[index + start] }

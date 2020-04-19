@@ -102,10 +102,9 @@ class PersistentVectorTypeTests<T> where T: PersistentVectorType, T: Arbitrary, 
     }
 
     func testConjAssoc() {
-        // FIXME: This test is failing for subvec
-//        property(name + " assoc() can append elements") <- forAll { (xs: T, y: T.Element) in
-//            return xs.conj(y) == xs.assoc(index: xs.count, y)
-//        }
+        property(name + " assoc() can append elements") <- forAll { (xs: T, y: T.Element) in
+            return xs.conj(y) == xs.assoc(index: xs.count, y)
+        }
     }
 
     func testConcat() {
